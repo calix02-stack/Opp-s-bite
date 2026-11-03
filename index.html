@@ -105,7 +105,8 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .sc{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--ln);border-radius:12px;padding:10px;margin-bottom:16px}
 .sc small{display:block;color:var(--gr);font-size:.8rem}.sc b{font-size:.95rem;font-weight:600}
 .back{border:1px solid #f4c9a8;background:var(--tn);color:var(--dk);border-radius:8px;padding:8px 12px;font-weight:600;font-size:.8rem}
-.bd h4{font-size:1rem;font-weight:600;margin:4px 0 10px;color:#3b3b3f}
+.bd h4{font-size:1rem;font-weight:600;margin:18px 0 10px;color:#3b3b3f}
+.bd h4:first-child{margin-top:4px}
 .fld{display:block;width:100%;font:inherit;font-size:.95rem;padding:13px 14px;border:1px solid var(--ln);border-radius:10px;background:#fafafa;color:var(--ink);margin-bottom:10px}
 .ph2{display:flex;align-items:center;gap:6px;border:1px solid var(--ln);border-radius:10px;background:#fafafa;padding:0 14px;margin-bottom:10px}
 .ph2 span{white-space:nowrap;font-size:.95rem;color:#444}.ph2 input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:.95rem;padding:13px 0;outline:0;color:var(--ink)}
@@ -159,6 +160,9 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .pmid{flex:1;min-width:0}.pmid .fld{margin-bottom:6px;padding:9px 10px;font-size:.88rem}
 .fbtn{display:inline-block;border:1px solid var(--pu);color:var(--dk);border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:600;cursor:pointer}
 .tr2{border:0;background:#f3f3f5;border-radius:50%;width:28px;height:28px;flex:none}
+.cch{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.cch button{border:1px solid var(--ln);background:#fff;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:600}
+.cch button.on{background:var(--pu);border-color:var(--pu);color:#fff}
 </style></head><body>
 <div id="top"><a class="cu" id="cu" target="_blank" rel="noopener"><i>💬</i>Contact Us</a><span class="cur">🇳🇬 Nigeria</span></div>
 <header><button class="hb" id="mb" aria-label="Menu"><i></i><i></i><i></i></button><button class="logo" id="lg" aria-label="Home">TOB</button>
@@ -356,7 +360,7 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
  if(!imgs.length&&x.image_url)imgs=[{id:null,name:"",url:x.image_url,turl:x.thumb_url,path:x.image_path,tpath:x.thumb_path}];
  if(!imgs.length)imgs=[{id:null,name:"",url:"",file:null}];
  b.onclick=null;
- b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="pe"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fct" list="cdl" placeholder="Category" value="'+esc(x.category||"")+'"><datalist id="cdl">'+cats.map(function(c){return'<option value="'+esc(c)+'">'}).join("")+'</datalist><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos and types</h4><p class="note">One photo for a normal product. Add more photos if it comes in different types or flavors, and give each photo its own name.</p><div id="pr"></div><button class="gry" id="pad" style="margin-bottom:14px">＋ Add another photo / type</button><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
+ b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="pe"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos and types</h4><p class="note">One photo for a normal product. Add more photos if it comes in different types or flavors, and give each photo its own name.</p><div id="pr"></div><button class="gry" id="pad" style="margin-bottom:14px">＋ Add another photo / type</button><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
  function pe(t){$("pe").innerHTML='<p class="err">'+esc(t)+'</p>'}
  function rr(){$("pr").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><input class="fld" data-n="'+j+'" placeholder="'+(imgs.length>1?"Name of this type":"Type name (optional)")+'" value="'+esc(m.name)+'"><label class="fbtn">'+(src?"Change photo":"Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
  rr();
@@ -365,6 +369,9 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
  $("pr").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rr()}};
  $("pad").onclick=function(){imgs.push({id:null,name:"",url:"",file:null});rr()};
  $("fc").onclick=function(){adProducts()};
+ function markCat(){var v=$("fct").value.trim();Array.prototype.forEach.call($("cch").children,function(c){c.className=c.dataset.cc===v?"on":""})}
+ $("cch").onclick=function(e){var t=e.target.closest("[data-cc]");if(t){$("fct").value=t.dataset.cc;markCat()}};
+ $("fct").oninput=markCat;markCat();
  $("fs").onclick=async function(){var nm=$("fnm").value.trim(),ct=$("fct").value.trim(),btn=this;
   if(!nm||!ct){pe("Please enter a name and a category.");return}
   if(imgs.some(function(m){return!m.file&&!m.url})){pe("Every row needs a photo.");return}
