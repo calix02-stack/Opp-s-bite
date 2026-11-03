@@ -215,7 +215,8 @@ function phoneFmt(v){var d=String(v).replace(/\D/g,"");if(d.indexOf("234")===0)r
 var SB_ON=!!(SB_URL&&SB_KEY&&window.supabase),sb=null,user=null;
 if(SB_ON){sb=supabase.createClient(SB_URL,SB_KEY);
  sb.auth.getSession().then(function(r){user=r.data.session?r.data.session.user:null;acct()});
- sb.auth.onAuthStateChange(function(e,s){user=s?s.user:null;acct()})}
+ /* FIX: defer the follow-up request so it does not deadlock the auth lock (this caused uploads to hang) */
+ sb.auth.onAuthStateChange(function(e,s){user=s?s.user:null;setTimeout(acct,0)})}
 function acct(){isAdmin=false;$("madm").hidden=true;if(user&&SB_ON)sb.from("profiles").select("role").eq("id",user.id).maybeSingle().then(function(r){isAdmin=!!(r.data&&r.data.role==="admin");$("madm").hidden=!isAdmin})}
 function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
  sb.from("products").select("*, product_images(*)").order("sort_order").order("created_at").then(function(r){
@@ -333,9 +334,12 @@ function adminLogin(mode){var d=$("ag"),up=mode==="up";
    save("tob8-made",true);b.disabled=false;am.innerHTML='<p class="ok">Account created. Check your email to confirm it, then log in.</p>'})
   .catch(function(e){b.disabled=false;er(e.message)})};
  openD("ag")}
-function compress(f,mx,qq){return new Promise(function(res){var im=new Image,u=URL.createObjectURL(f);im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);res(b)},"image/jpeg",qq)};im.src=u})}
+/* FIX: timeout helper so a stuck step shows an error instead of hanging forever */
+function tmo(p,ms,l){return Promise.race([p,new Promise(function(_,j){setTimeout(function(){j(new Error(l+" timed out. Check your network and try again."))},ms)})])}
+/* FIX: compress now fails loudly if the photo cannot be read or resized */
+function compress(f,mx,qq){return new Promise(function(res,rej){var im=new Image,u=URL.createObjectURL(f);im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("Could not read this photo"))};im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);b?res(b):rej(new Error("Resize failed"))},"image/jpeg",qq)};im.src=u})}
 function upload(b){var path=Date.now()+"-"+Math.random().toString(36).slice(2,8)+".jpg";return sb.storage.from(BK).upload(path,b,{contentType:"image/jpeg",cacheControl:"31536000"}).then(function(r){if(r.error)throw r.error;return{path:path,url:sb.storage.from(BK).getPublicUrl(path).data.publicUrl}})}
-async function up(f){var a=await compress(f,900,.82),b=await compress(f,400,.75),u1=await upload(a),u2=await upload(b);return{url:u1.url,path:u1.path,turl:u2.url,tpath:u2.path}}
+async function up(f){var a=await tmo(compress(f,900,.82),20000,"Resizing"),b=await tmo(compress(f,400,.75),20000,"Resizing"),u1=await tmo(upload(a),40000,"Upload"),u2=await tmo(upload(b),40000,"Upload");return{url:u1.url,path:u1.path,turl:u2.url,tpath:u2.path}}
 function rm(a){a=a.filter(Boolean);if(a.length)sb.storage.from(BK).remove(a)}
 var acat="All",aq="";
 function adminUI(){var d=$("adg");
@@ -378,10 +382,11 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
   btn.disabled=true;btn.textContent="Saving…";
   try{var base={name:nm,category:ct,description:$("fds").value.trim(),in_stock:$("fin").checked,adult:$("fad").checked},pid=x.id;
    if(pid){var a=await sb.from("products").update(base).eq("id",pid);if(a.error)throw a.error}
-   else{base.sort_order=DBROWS.length;var c=await sb.from("products").insert(base).select("id").single();if(c.error)throw c.error;pid=c.data.id}
+   else{base.sort_order=DBROWS.length;var c=await sb.from("products").insert(base).select("id").single();if(c.error)throw c.error;pid=c.data.id;x.id=pid}
    for(var g=0;g<gone.length;g++){await sb.from("product_images").delete().eq("id",gone[g].id);rm([gone[g].path,gone[g].tpath])}
+   gone=[];
    for(var j=0;j<imgs.length;j++){var m=imgs[j],row={product_id:pid,name:m.name.trim(),sort_order:j};
-    if(m.file){btn.textContent="Uploading "+(j+1)+" of "+imgs.length+"…";var u=await up(m.file);row.image_url=u.url;row.image_path=u.path;row.thumb_url=u.turl;row.thumb_path=u.tpath;rm([m.path,m.tpath]);m.url=u.url;m.turl=u.turl;m.path=u.path;m.tpath=u.tpath}
+    if(m.file){btn.textContent="Uploading "+(j+1)+" of "+imgs.length+"…";var u=await up(m.file);row.image_url=u.url;row.image_path=u.path;row.thumb_url=u.turl;row.thumb_path=u.tpath;rm([m.path,m.tpath]);m.url=u.url;m.turl=u.turl;m.path=u.path;m.tpath=u.tpath;m.file=null}
     else if(!m.id){row.image_url=m.url;row.image_path=m.path;row.thumb_url=m.turl;row.thumb_path=m.tpath}
     var w=m.id?await sb.from("product_images").update(row).eq("id",m.id):await sb.from("product_images").insert(row);if(w.error)throw w.error}
    var f0=imgs[0];await sb.from("products").update({image_url:f0.url,image_path:f0.path,thumb_url:f0.turl,thumb_path:f0.tpath}).eq("id",pid);
