@@ -151,6 +151,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 #toast.s{opacity:1}
 .tot{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
 /* admin */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.gi{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#f1f1f3}.gi img{width:100%;height:100%;object-fit:cover}.gi button{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:#fff;font-size:.8rem}.cv{position:absolute;left:4px;bottom:4px;background:var(--pu);color:#fff;font-size:.65rem;font-style:normal;padding:2px 6px;border-radius:6px}
 #ac{display:flex;gap:6px;overflow-x:auto;margin:12px 0;scrollbar-width:none}
 #ac button{flex:none;border:1px solid var(--ln);background:#fff;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:600;white-space:nowrap}
 #ac button[aria-pressed=true]{background:var(--pu);border-color:var(--pu);color:#fff}
@@ -206,13 +207,13 @@ var CATS=["Ramen 🍜","Cereals 🥣","Chocolate 🍫","Chips 🍟","Tteokbokki 
 function buildCats(){cats=CATS.slice();P.forEach(function(p){if(cats.indexOf(p[0])<0)cats.push(p[0])})}buildCats();
 function emo(c){var w=String(c).split(" ").pop();return /^[\x00-\x7f]*$/.test(w)?"":w}
 function tb(p){return p[9]||p[6]}
-function multi(p){return(p[10]||[]).length>1}
+function multi(p){return(p[12]||[]).length>0}
 /* price: always shows something. No price set -> "No price" */
 function money(n){return n>0?"NGN "+Number(n).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2}):"No price"}
-function vp(p,j){var v=(p[10]||[])[j];return v&&v.price>0?v.price:(p[11]||0)}
-function pdisp(p){if(!multi(p))return money(p[11]);var a=p[10].map(function(v,j){return vp(p,j)}).filter(function(n){return n>0});if(!a.length)return"No price";var lo=Math.min.apply(0,a),hi=Math.max.apply(0,a);return lo===hi?money(lo):"From "+money(lo)}
-function ci(k){var s=String(k).split(":"),p=P[+s[0]];if(!p)return null;var V=p[10]||[],j=s[1]!==undefined?+s[1]:-1,v=j>=0?V[j]:null;if(j>=0&&!v)return null;
- return{p:p,name:p[1]+(v&&v.name?" – "+v.name:""),img:v?(v.thumb||v.url):tb(p),price:j>=0?vp(p,j):(p[11]||0)}}
+function vp(p,j){var v=(p[12]||[])[j];return v&&v.price>0?v.price:(p[11]||0)}
+function pdisp(p){if(!multi(p))return money(p[11]);var a=p[12].map(function(v,j){return vp(p,j)}).filter(function(n){return n>0});if(!a.length)return"No price";var lo=Math.min.apply(0,a),hi=Math.max.apply(0,a);return lo===hi?money(lo):"From "+money(lo)}
+function ci(k){var s=String(k).split(":"),p=P[+s[0]];if(!p)return null;var V=p[12]||[],j=s[1]!==undefined?+s[1]:-1,v=j>=0?V[j]:null;if(j>=0&&!v)return null;
+ return{p:p,name:p[1]+(v&&v.name?" – "+v.name:""),img:tb(p),price:j>=0?vp(p,j):(p[11]||0)}}
 function tp(){var n=0;for(var k in cart){var c=ci(k);if(c)n+=c.price*cart[k]}return n}
 function cover(c){for(var i=0;i<P.length;i++)if(P[i][0]===c)return tb(P[i]);return""}
 function cnt(c){var n=0;P.forEach(function(p){if(c==="All"||p[0]===c)n++});return n}
@@ -236,7 +237,7 @@ function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
   if(r.error)toast("Could not load products",3000);else{DBROWS=r.data||[];P=DBROWS.map(function(x){
    var im=(x.product_images||[]).slice().sort(function(a,b){return a.sort_order-b.sort_order}).map(function(m){return{name:m.name||"",url:m.image_url,thumb:m.thumb_url||m.image_url,price:Number(m.price)||0}});
    if(!im.length&&x.image_url)im=[{name:"",url:x.image_url,thumb:x.thumb_url||x.image_url,price:0}];
-   return [x.category,x.name,"","",x.description||"",x.adult?["18+"]:[],im[0]?im[0].url:"",x.id,x.in_stock,im[0]?im[0].thumb:"",im,Number(x.price)||0]})}
+   return [x.category,x.name,"","",x.description||"",x.adult?["18+"]:[],im[0]?im[0].url:"",x.id,x.in_stock,im[0]?im[0].thumb:"",im,Number(x.price)||0,Array.isArray(x.options)?x.options.map(function(o){return{name:String(o.name||""),price:Number(o.price)||0}}):[]]})}
   loaded=true;buildCats();restoreCart();tiles();draw();openHash();if(cb)cb()})}
 function openHash(){var m=/^#p-(.+)$/.exec(location.hash);if(!m||openHash.d)return;var id=decodeURIComponent(m[1]);P.forEach(function(p,i){if(String(p[7])===id&&!openHash.d){openHash.d=1;showP(i)}})}
 /* ---------- views ---------- */
@@ -258,7 +259,7 @@ function ctl(i){var p=P[i];if(p[8]===false)return'<button class="btn" disabled s
  return cart[i]?'<div class="stp"><button data-m="'+i+'" aria-label="Less">−</button><span>'+cart[i]+'</span><button data-p="'+i+'" aria-label="More">+</button></div>':'<button class="btn" data-a="'+i+'">Add To Cart</button>'}
 function card(i){var p=P[i],s=pdisp(p);return'<div class="pc"><div class="im" data-i="'+i+'"><img src="'+tb(p)+'" loading="lazy" decoding="async" alt="'+esc(p[1])+'"></div><div class="nm">'+esc(p[1])+'</div><div class="pr'+(s==="No price"?" np":"")+'">'+s+'</div><div class="act" data-k="'+i+'">'+ctl(i)+'</div></div>'}
 function draw(){var h="",n=0;
- P.forEach(function(p,i){if(cur!=="All"&&p[0]!==cur)return;if(q&&(p[0]+" "+p[1]+" "+(p[10]||[]).map(function(v){return v.name}).join(" ")).toLowerCase().indexOf(q)<0)return;n++;h+=card(i)});
+ P.forEach(function(p,i){if(cur!=="All"&&p[0]!==cur)return;if(q&&(p[0]+" "+p[1]+" "+(p[12]||[]).map(function(v){return v.name}).join(" ")).toLowerCase().indexOf(q)<0)return;n++;h+=card(i)});
  $("grid").innerHTML=h;$("hgrid").innerHTML=P.slice(0,8).map(function(p,i){return card(i)}).join("");
  var e=$("none");e.hidden=!!n;e.textContent=!loaded?"Loading products…":(P.length?"No products found.":"No products yet.");$("ddt").textContent=cur==="All"?"All Categories":cur;$("cn").textContent=total();againUI()}
 function setQty(k,n){if(n<=0)delete cart[k];else cart[k]=Math.min(n,99);saveCart();var i=parseInt(k);Array.prototype.forEach.call(document.querySelectorAll('.act[data-k="'+i+'"]'),function(a){a.innerHTML=ctl(i)});$("cn").textContent=total();if($("cg").open)cartUI()}
@@ -279,21 +280,22 @@ function againUI(){var L=load("tob10-last",{}),ks=[],el=$("again"),n=0;
  el.hidden=false;el.innerHTML='<div class="ph"><h2>Order again</h2></div><div class="ci" style="padding:12px"><div class="sum"><span class="th">'+ks.slice(0,4).map(function(a){return'<img src="'+ci(a[0]).img+'" alt="">'}).join("")+'</span><b style="color:var(--ink);font-weight:600">'+items(n)+' from your last order</b></div><button class="pri" id="agb">Add them to my cart</button></div>';
  $("agb").onclick=function(){ks.forEach(function(a){setQty(a[0],Math.max(cart[a[0]]||0,a[1]))});toast("Added from your last order");cartUI();openD("cg")}}
 /* options sheet: each type/flavor has its own photo, name and price */
-function showOpts(i){var p=P[i],V=p[10]||[],d=$("og"),sel={};V.forEach(function(v,j){if(cart[i+":"+j])sel[j]=1});
- d.innerHTML='<div class="dh" style="background:#f8f8f8"><h3>Select Options</h3><button class="x" id="ox" aria-label="Close">✕</button></div><div class="bd"><div class="ci">'+V.map(function(v,j){return'<div class="opt2" data-j="'+j+'" role="checkbox" aria-checked="'+!!sel[j]+'"><span class="rd"></span><img src="'+(v.thumb||v.url)+'" alt=""><div><b>'+esc(v.name||p[1]+" #"+(j+1))+'</b><small>'+money(vp(p,j))+'</small></div></div>'}).join("")+'</div></div><div class="ft2"><button class="pri" id="ou">Update Cart</button></div>';
- $("ox").onclick=function(){d.close()};
- d.onclick=function(e){if(e.target===d){d.close();return}var o=e.target.closest(".opt2");if(o){var j=+o.dataset.j;sel[j]=sel[j]?0:1;o.setAttribute("aria-checked",!!sel[j])}};
- $("ou").onclick=function(){V.forEach(function(v,j){var k=i+":"+j;if(sel[j]&&!cart[k])setQty(k,1);else if(!sel[j]&&cart[k])setQty(k,0)});toast("Cart updated");d.close()};
- openD("og")}
-/* product page */
-function showP(i){var d=$("pg"),vi=0;
- function r(){var p=P[i],V=p[10]||[],m=V.length>1,v=V[vi]||{url:p[6],name:""},t=p[1],out=p[8]===false,pr=m?vp(p,vi):p[11];
- d.innerHTML='<div class="dh" style="border:0"><button class="sh" id="psh" aria-label="Share">⤴</button><button class="x" id="px" aria-label="Close">✕</button></div><div><div class="pimg"><img src="'+v.url+'" alt="'+esc(t)+'">'+(m?'<button class="l" id="pl" aria-label="Previous">‹</button><button class="r" id="pr" aria-label="Next">›</button>':'')+'</div>'+(m?'<div class="thr">'+V.map(function(x,j){return'<img data-t="'+j+'" class="'+(j===vi?"on":"")+'" src="'+(x.thumb||x.url)+'" alt="">'}).join("")+'</div>':'')+'<div class="pt"><h1>'+esc(t)+'</h1><div class="pp'+(pr>0?"":" np")+'">'+money(pr)+'</div><hr><div class="ch">'+(m&&v.name?'<em>'+esc(v.name)+'</em>':'')+'<em>'+(out?"Out of stock":"In stock")+'</em><em>'+esc(p[0])+'</em></div>'+(p[4]?'<p class="txt">'+esc(p[4])+'</p>':'')+(p[5].length?'<p class="txt">For buyers 18 or older.</p>':'')+'</div></div><div class="ft2"><button class="pri" id="pa"'+(out?' disabled style="opacity:.5"':'')+'>'+(out?"Out of Stock":"Add To Cart")+'</button></div>';
+function showOpts(i){var p=P[i],V=p[12]||[],d=$("og");
+ function r(){d.innerHTML='<div class="dh" style="background:#f8f8f8"><h3>Select Options</h3><button class="x" id="ox" aria-label="Close">✕</button></div><div class="bd"><p class="note">'+esc(p[1])+'</p><div class="ci">'+V.map(function(v,j){var k=i+":"+j,pz=vp(p,j);return'<div class="ln"><div class="mid"><b style="margin:0">'+esc(v.name||"Option "+(j+1))+'</b><div class="pp'+(pz>0?"":" np")+'" style="font-size:.9rem;margin:2px 0 0">'+money(pz)+'</div></div><div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+(cart[k]||0)+'</span><button data-p="'+k+'" aria-label="More">+</button></div></div>'}).join("")+'</div></div><div class="ft2"><button class="pri" id="ou">Done</button></div>';
+  $("ox").onclick=$("ou").onclick=function(){d.close()}}
+ d.onclick=function(e){if(e.target===d){d.close();return}var b=e.target.closest("[data-p],[data-m]");if(!b)return;if(b.dataset.p!==undefined)bump(b.dataset.p,1);else bump(b.dataset.m,-1);var st=d.scrollTop;r();d.scrollTop=st};
+ r();openD("og")}
+/* product page: photos are a gallery, options are a separate text list */
+function showP(i){var d=$("pg"),vi=0,oi=0;
+ function r(){var st=d.scrollTop,p=P[i],V=p[10]||[],m=V.length>1,v=V[vi]||{url:p[6]},O=p[12]||[],t=p[1],out=p[8]===false,price=O.length?vp(p,oi):p[11];
+ d.innerHTML='<div class="dh" style="border:0"><button class="sh" id="psh" aria-label="Share">⤴</button><button class="x" id="px" aria-label="Close">✕</button></div><div><div class="pimg"><img src="'+v.url+'" alt="'+esc(t)+'">'+(m?'<button class="l" id="pl" aria-label="Previous">‹</button><button class="r" id="pnx" aria-label="Next">›</button>':'')+'</div>'+(m?'<div class="thr">'+V.map(function(x,j){return'<img data-t="'+j+'" class="'+(j===vi?"on":"")+'" src="'+(x.thumb||x.url)+'" alt="">'}).join("")+'</div>':'')+'<div class="pt"><h1>'+esc(t)+'</h1><div class="pp'+(price>0?"":" np")+'">'+money(price)+'</div>'+(O.length?'<h4 style="margin:16px 0 8px;font-size:1rem">Options</h4><div class="ci">'+O.map(function(o,j){var oz=vp(p,j);return'<div class="opt2" data-oj="'+j+'" role="radio" aria-checked="'+(j===oi)+'"><span class="rd"></span><div><b>'+esc(o.name||"Option "+(j+1))+'</b><small>'+money(oz)+'</small></div></div>'}).join("")+'</div>':'')+'<hr><div class="ch"><em>'+(out?"Out of stock":"In stock")+'</em><em>'+esc(p[0])+'</em></div>'+(p[4]?'<p class="txt">'+esc(p[4])+'</p>':'')+(p[5].length?'<p class="txt">For buyers 18 or older.</p>':'')+'</div></div><div class="ft2"><button class="pri" id="pa"'+(out?' disabled style="opacity:.5"':'')+'>'+(out?"Out of Stock":"Add To Cart")+'</button></div>';
+ d.scrollTop=st;
  $("px").onclick=function(){d.close()};
- if(m){$("pl").onclick=function(){vi=(vi-1+V.length)%V.length;r()};$("pr").onclick=function(){vi=(vi+1)%V.length;r()};
+ if(m){$("pl").onclick=function(){vi=(vi-1+V.length)%V.length;r()};$("pnx").onclick=function(){vi=(vi+1)%V.length;r()};
   Array.prototype.forEach.call(d.querySelectorAll("[data-t]"),function(x){x.onclick=function(){vi=+x.dataset.t;r()}});
   var on=d.querySelector(".thr .on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"})}
- $("pa").onclick=function(){add(m?i+":"+vi:i)};
+ Array.prototype.forEach.call(d.querySelectorAll("[data-oj]"),function(x){x.onclick=function(){oi=+x.dataset.oj;r()}});
+ $("pa").onclick=function(){add(O.length?i+":"+oi:i)};
  $("psh").onclick=function(){var u={title:p[1],text:p[1]+" – Timi’s Oppa Bite",url:location.href.split("#")[0]+"#p-"+encodeURIComponent(p[7])};if(navigator.share){navigator.share(u).catch(function(){})}else{try{navigator.clipboard.writeText(u.text+" "+u.url).then(function(){toast("Link copied")})}catch(e){toast("Copy the page address to share")}}}}
  var sx=0;d.ontouchstart=function(e){sx=e.touches[0].clientX};
  d.ontouchend=function(e){var V=P[i][10]||[];if(V.length>1&&e.target.closest(".pimg")){var x=e.changedTouches[0].clientX-sx;if(Math.abs(x)>50){vi=(vi+(x<0?1:-1)+V.length)%V.length;r()}}};
@@ -339,7 +341,7 @@ function checkout(){var d=$("kg");if(!total()){toast("Your cart is empty");retur
  openD("kg")}
 /* ---------- admin ---------- */
 function adminEntry(){if(!SB_ON){toast("Admin is not connected yet. Add your Supabase details to the page first.",3500);return}if(isAdmin){adminUI();return}adminLogin(load("tob8-made",false)?"in":"up")}
-function friendly(m){m=String(m||"");if(/fetch|network/i.test(m))return"Cannot reach the database. Open the site from your real website link and check the Supabase URL and key.";if(/database error|not allowed|only the shop/i.test(m))return"This email is not allowed. Only the shop admins can create an account.";if(/price/i.test(m)&&/column/i.test(m))return"Run the one-line SQL to add the price column (see instructions), then try again.";return m}
+function friendly(m){m=String(m||"");if(/fetch|network/i.test(m))return"Cannot reach the database. Open the site from your real website link and check the Supabase URL and key.";if(/database error|not allowed|only the shop/i.test(m))return"This email is not allowed. Only the shop admins can create an account.";if(/(price|options)/i.test(m)&&/column/i.test(m))return"Run the new SQL in Supabase (adds the options column), then try again.";return m}
 function adminLogin(mode){var d=$("ag"),up=mode==="up";
  d.innerHTML='<div class="dh"><h3>Admin</h3><button class="x" id="axx" aria-label="Close">✕</button></div><div class="bd"><div class="tabs"><button id="t1" aria-selected="'+up+'">Create account</button><button id="t2" aria-selected="'+!up+'">Log in</button></div><p class="note">'+(up?"First time only. Only the shop admin emails can create an account.":"Log in to manage your products.")+'</p><div id="am"></div><input class="fld" id="fe" type="email" placeholder="Admin email" autocomplete="email"><input class="fld" id="fw" type="password" placeholder="Password'+(up?" (at least 6 characters)":"")+'" autocomplete="'+(up?"new-password":"current-password")+'"><button class="pri" id="go">'+(up?"Create account":"Log in")+'</button></div>';
  var am=$("am");function er(t){am.innerHTML='<p class="err">'+esc(friendly(t))+'</p>'}
@@ -379,37 +381,41 @@ function adProducts(){var b=$("ab");
   else if(t.dataset.st){var x=row(t.dataset.st);sb.from("products").update({in_stock:!x.in_stock}).eq("id",x.id).then(function(){loadProducts(adProducts)})}
   else if(t.dataset.dl){var y=row(t.dataset.dl);if(confirm("Delete "+y.name+"?")){var ps=[y.image_path,y.thumb_path];(y.product_images||[]).forEach(function(m){ps.push(m.image_path,m.thumb_path)});sb.from("products").delete().eq("id",y.id).then(function(r){if(r.error){toast(r.error.message);return}rm(ps);loadProducts(adProducts)})}}}}
 function pform(x){x=x||{};var b=$("ab"),gone=[];
- var imgs=(x.product_images||[]).slice().sort(function(a,c){return a.sort_order-c.sort_order}).map(function(m){return{id:m.id,name:m.name||"",price:m.price||"",url:m.image_url,turl:m.thumb_url,path:m.image_path,tpath:m.thumb_path}});
- if(!imgs.length&&x.image_url)imgs=[{id:null,name:"",price:"",url:x.image_url,turl:x.thumb_url,path:x.image_path,tpath:x.thumb_path}];
- if(!imgs.length)imgs=[{id:null,name:"",price:"",url:"",file:null}];
+ var imgs=(x.product_images||[]).slice().sort(function(a,c){return a.sort_order-c.sort_order}).map(function(m){return{id:m.id,url:m.image_url,turl:m.thumb_url,path:m.image_path,tpath:m.thumb_path}});
+ if(!imgs.length&&x.image_url)imgs=[{id:null,url:x.image_url,turl:x.thumb_url,path:x.image_path,tpath:x.thumb_path}];
+ var opts=(Array.isArray(x.options)?x.options:[]).map(function(o){return{name:String(o.name||""),price:o.price||""}});
  b.onclick=null;
- b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="ape"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Main price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos / options</h4><p class="note">One photo = a normal product. Add more photos to make other types or flavors of the same product: name each one and give it its own price. Customers will see “Select Options”. A blank option price uses the main price.</p><div id="phl"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
+ b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="ape"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Main price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label>'+
+ '<h4>Photos</h4><p class="note">Add as many photos as you like. The first one is the cover.</p><div id="phl"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label>'+
+ '<h4>Options &amp; prices</h4><p class="note">Optional. Add each flavor or type with its own price. No options? The main price is used.</p><div id="opl"></div><button type="button" class="gry" id="aoa" style="margin-bottom:14px">＋ Add option</button><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
  function pe(t){$("ape").innerHTML='<p class="err">'+esc(t)+'</p>'}
- function rr(){$("phl").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><div class="lb">Name (flavor / type)</div><input class="fld" data-n="'+j+'" placeholder="e.g. Strawberry" value="'+esc(m.name)+'"><div class="lb">Price (₦)</div><input class="fld" data-pp="'+j+'" type="number" inputmode="decimal" min="0" placeholder="Leave blank to use main price" value="'+esc(m.price||"")+'"><label class="fbtn">'+(src?"Change photo":"📷 Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
- rr();
- $("phl").oninput=function(e){var n=e.target.dataset.n,pp=e.target.dataset.pp;if(n!==undefined)imgs[+n].name=e.target.value;if(pp!==undefined)imgs[+pp].price=e.target.value};
- $("phl").onchange=function(e){var f=e.target.dataset.f;if(f!==undefined&&e.target.files[0]){var m=imgs[+f];m.file=e.target.files[0];m.prev=URL.createObjectURL(m.file);rr()}};
- $("phl").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rr()}};
- $("pmulti").onchange=function(e){var fs=Array.prototype.slice.call(e.target.files);if(!fs.length)return;imgs=imgs.filter(function(m){return m.id||m.url||m.file});fs.forEach(function(f){imgs.push({id:null,name:"",price:"",url:"",file:f,prev:URL.createObjectURL(f)})});e.target.value="";rr()};
+ function rp(){$("phl").innerHTML=imgs.length?'<div class="gal">'+imgs.map(function(m,j){return'<div class="gi"><img src="'+esc(m.prev||m.turl||m.url)+'" alt=""><button data-r="'+j+'" aria-label="Remove">✕</button>'+(j===0?'<i class="cv">Cover</i>':'')+'</div>'}).join("")+'</div>':'<p class="note">No photos yet.</p>'}
+ function ro(){$("opl").innerHTML=opts.map(function(o,j){return'<div class="prow" style="align-items:center"><div class="pmid"><input class="fld" data-on="'+j+'" placeholder="Option name (e.g. Strawberry)" value="'+esc(o.name)+'"><input class="fld" data-op="'+j+'" type="number" inputmode="decimal" min="0" placeholder="Price (₦)" value="'+esc(o.price)+'" style="margin-bottom:0"></div><button class="tr2" data-or="'+j+'" aria-label="Remove">✕</button></div>'}).join("")}
+ rp();ro();
+ $("phl").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rp()}};
+ $("pmulti").onchange=function(e){var fs=Array.prototype.slice.call(e.target.files);if(!fs.length)return;fs.forEach(function(f){imgs.push({id:null,url:"",file:f,prev:URL.createObjectURL(f)})});e.target.value="";rp()};
+ $("opl").oninput=function(e){var n=e.target.dataset.on,p=e.target.dataset.op;if(n!==undefined)opts[+n].name=e.target.value;if(p!==undefined)opts[+p].price=e.target.value};
+ $("opl").onclick=function(e){var r=e.target.closest("[data-or]");if(r){opts.splice(+r.dataset.or,1);ro()}};
+ $("aoa").onclick=function(){opts.push({name:"",price:""});ro();var f=$("opl").querySelectorAll("[data-on]");if(f.length)f[f.length-1].focus()};
  $("fc").onclick=function(){adProducts()};
  function markCat(){var v=$("fct").value.trim();Array.prototype.forEach.call($("cch").children,function(c){c.className=c.dataset.cc===v?"on":""})}
  $("cch").onclick=function(e){var t=e.target.closest("[data-cc]");if(t){$("fct").value=t.dataset.cc;markCat()}};
  $("fct").oninput=markCat;markCat();
  $("fs").onclick=async function(){var nm=$("fnm").value.trim(),ct=$("fct").value.trim(),btn=this;
   if(!nm||!ct){pe("Please enter a name and a category.");return}
-  if(imgs.some(function(m){return!m.file&&!m.url})){pe("Every row needs a photo.");return}
+  if(!imgs.length){pe("Please add at least one photo.");return}
+  var co=opts.filter(function(o){return o.name.trim()}).map(function(o){return{name:o.name.trim(),price:Number(o.price)||0}});
   btn.disabled=true;btn.textContent="Saving…";
-  try{var base={name:nm,category:ct,description:$("fds").value.trim(),price:Number($("fpr").value)||0,in_stock:$("fin").checked,adult:$("fad").checked},pid=x.id;
+  try{var base={name:nm,category:ct,description:$("fds").value.trim(),price:Number($("fpr").value)||0,in_stock:$("fin").checked,adult:$("fad").checked,options:co},pid=x.id;
    if(pid){var a=await sb.from("products").update(base).eq("id",pid);if(a.error)throw a.error}
    else{base.sort_order=DBROWS.length;var c=await sb.from("products").insert(base).select("id").single();if(c.error)throw c.error;pid=c.data.id;x.id=pid}
    for(var g=0;g<gone.length;g++){await sb.from("product_images").delete().eq("id",gone[g].id);rm([gone[g].path,gone[g].tpath])}
    gone=[];
-   for(var j=0;j<imgs.length;j++){var m=imgs[j],row={product_id:pid,name:m.name.trim(),price:Number(m.price)||0,sort_order:j};
-    if(m.file){btn.textContent="Uploading "+(j+1)+" of "+imgs.length+"…";var u=await up(m.file);row.image_url=u.url;row.image_path=u.path;row.thumb_url=u.turl;row.thumb_path=u.tpath;rm([m.path,m.tpath]);m.url=u.url;m.turl=u.turl;m.path=u.path;m.tpath=u.tpath;m.file=null}
-    else if(!m.id){row.image_url=m.url;row.image_path=m.path;row.thumb_url=m.turl;row.thumb_path=m.tpath}
-    var w=m.id?await sb.from("product_images").update(row).eq("id",m.id):await sb.from("product_images").insert(row);if(w.error)throw w.error}
+   for(var j=0;j<imgs.length;j++){var m=imgs[j],row={product_id:pid,sort_order:j};
+    if(m.file){btn.textContent="Uploading photo "+(j+1)+" of "+imgs.length+"…";var u=await up(m.file);row.image_url=u.url;row.image_path=u.path;row.thumb_url=u.turl;row.thumb_path=u.tpath;m.url=u.url;m.turl=u.turl;m.path=u.path;m.tpath=u.tpath;m.file=null}
+    var w=m.id?await sb.from("product_images").update(row).eq("id",m.id):await sb.from("product_images").insert(row).select("id").single();if(w.error)throw w.error;if(!m.id&&w.data)m.id=w.data.id}
    var f0=imgs[0];await sb.from("products").update({image_url:f0.url,image_path:f0.path,thumb_url:f0.turl,thumb_path:f0.tpath}).eq("id",pid);
    loadProducts(function(){adProducts();toast("Saved")})
-  }catch(e){btn.disabled=false;btn.textContent="Save";pe(e.message||"Something went wrong")}}}
+  }catch(e){btn.disabled=false;btn.textContent="Save";pe(friendly(e.message)||"Something went wrong")}}}
 restoreCart();tiles();draw();acct();loadProducts();
 </script></body></html>
