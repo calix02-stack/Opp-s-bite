@@ -163,6 +163,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .cch{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
 .cch button{border:1px solid var(--ln);background:#fff;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:600}
 .cch button.on{background:var(--pu);border-color:var(--pu);color:#fff}
+.pc .pr{font-weight:700;font-size:.95rem;margin:-4px 0 9px;color:var(--dk)}.pp{font-size:.82rem;color:var(--gr);margin:-3px 0 6px}.pt .pp{font-size:1.3rem;font-weight:700;color:var(--dk);margin:8px 0 0}.tot{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
 </style></head><body>
 <div id="top"><a class="cu" id="cu" target="_blank" rel="noopener"><i>💬</i>Contact Us</a><span class="cur">🇳🇬 Nigeria</span></div>
 <header><button class="hb" id="mb" aria-label="Menu"><i></i><i></i><i></i></button><button class="logo" id="lg" aria-label="Home">TOB</button>
@@ -198,14 +199,16 @@ var CATS=["Ramen 🍜","Cereals 🥣","Chocolate 🍫","Chips 🍟","Tteokbokki 
 function buildCats(){cats=CATS.slice();P.forEach(function(p){if(cats.indexOf(p[0])<0)cats.push(p[0])})}buildCats();
 function emo(c){var w=String(c).split(" ").pop();return /^[\x00-\x7f]*$/.test(w)?"":w}
 function tb(p){return p[9]||p[6]}
-function multi(p){return(p[10]||[]).length>1}
+function multi(p){return false}
+function money(n){return n>0?"₦"+Number(n).toLocaleString("en-NG"):""}
+function tp(){var n=0;for(var k in cart){var c=ci(k);if(c)n+=c.price*cart[k]}return n}
 function cover(c){for(var i=0;i<P.length;i++)if(P[i][0]===c)return tb(P[i]);return""}
 function cnt(c){var n=0;P.forEach(function(p){if(c==="All"||p[0]===c)n++});return n}
 function items(n){return n+(n===1?" Item":" Items")}
 function total(){var n=0;for(var k in cart)n+=cart[k];return n}
-function ci(k){var a=String(k).split(":"),p=P[+a[0]];if(!p)return null;var v=a.length>1?(p[10]||[])[+a[1]]:null;return{p:p,name:v?(v.name||p[1]+" #"+(+a[1]+1)):p[1],img:v?(v.thumb||v.url):tb(p)}}
+function ci(k){var p=P[parseInt(k)];if(!p)return null;return{p:p,name:p[1],img:tb(p),price:p[11]||0}}
 function saveCart(){raw={};for(var k in cart){var c=ci(k);if(c)raw[c.name]=cart[k]}save("tob9-cart",raw)}
-function restoreCart(){cart={};P.forEach(function(p,i){var V=p[10]||[];if(V.length>1)V.forEach(function(v,j){var n=v.name||p[1]+" #"+(j+1);if(raw[n])cart[i+":"+j]=raw[n]});else if(raw[p[1]])cart[i]=raw[p[1]]});$("cn").textContent=total()}
+function restoreCart(){cart={};P.forEach(function(p,i){if(raw[p[1]])cart[i]=raw[p[1]]});$("cn").textContent=total()}
 function toast(t,ms){var e=$("toast");e.textContent=t;e.className="s";clearTimeout(toast.t);toast.t=setTimeout(function(){e.className=""},ms||1800)}
 function openD(id){var d=$(id);if(!d.open)d.showModal()}
 ["pg","og","cg","kg","ag","lg2","ig","adg"].forEach(function(id){$(id).addEventListener("click",function(e){if(e.target===$(id))$(id).close()})});
@@ -223,7 +226,7 @@ function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
   if(r.error)toast("Could not load products",3000);else{DBROWS=r.data||[];P=DBROWS.map(function(x){
    var im=(x.product_images||[]).slice().sort(function(a,b){return a.sort_order-b.sort_order}).map(function(m){return{name:m.name||"",url:m.image_url,thumb:m.thumb_url||m.image_url}});
    if(!im.length&&x.image_url)im=[{name:"",url:x.image_url,thumb:x.thumb_url||x.image_url}];
-   return [x.category,x.name,"","",x.description||"",x.adult?["18+"]:[],im[0]?im[0].url:"",x.id,x.in_stock,im[0]?im[0].thumb:"",im]})}
+   return [x.category,x.name,"","",x.description||"",x.adult?["18+"]:[],im[0]?im[0].url:"",x.id,x.in_stock,im[0]?im[0].thumb:"",im,Number(x.price)||0]})}
   loaded=true;buildCats();restoreCart();tiles();draw();if(cb)cb()})}
 /* ---------- views ---------- */
 var view="home";
@@ -243,7 +246,7 @@ function ctl(i){var p=P[i];if(p[8]===false)return'<button class="btn" disabled s
  return cart[i]?'<div class="stp"><button data-m="'+i+'" aria-label="Less">−</button><span>'+cart[i]+'</span><button data-p="'+i+'" aria-label="More">+</button></div>':'<button class="btn" data-a="'+i+'">Add To Cart</button>'}
 function draw(){var h="";vis=[];
  P.forEach(function(p,i){if(cur!=="All"&&p[0]!==cur)return;if(q&&(p[0]+" "+p[1]+" "+(p[10]||[]).map(function(v){return v.name}).join(" ")).toLowerCase().indexOf(q)<0)return;vis.push(i);
-  h+='<div class="pc" id="pc'+i+'"><div class="im" data-i="'+i+'"><img src="'+tb(p)+'" loading="lazy" decoding="async" alt="'+esc(p[1])+'"></div><div class="nm">'+esc(p[1])+'</div><div class="act">'+ctl(i)+'</div></div>'});
+  h+='<div class="pc" id="pc'+i+'"><div class="im" data-i="'+i+'"><img src="'+tb(p)+'" loading="lazy" decoding="async" alt="'+esc(p[1])+'"></div><div class="nm">'+esc(p[1])+'</div>'+(p[11]?'<div class="pr">'+money(p[11])+'</div>':'')+'<div class="act">'+ctl(i)+'</div></div>'});
  $("grid").innerHTML=h;var n=$("none");n.hidden=!!vis.length;n.textContent=!loaded?"Loading products…":(P.length?"No products found.":"No products yet.");$("ddt").textContent=cur;$("cn").textContent=total()}
 var vis=[];
 function setQty(k,n){if(n<=0)delete cart[k];else cart[k]=Math.min(n,99);saveCart();var i=parseInt(k),a=document.querySelector("#pc"+i+" .act");if(a)a.innerHTML=ctl(i);$("cn").textContent=total();if($("cg").open)cartUI()}
@@ -266,13 +269,13 @@ function showOpts(i,pre){var p=P[i],V=p[10]||[],d=$("og"),sel={};V.forEach(funct
  openD("og")}
 /* product page */
 function showP(i){var d=$("pg"),vi=0;
- function r(){var p=P[i],V=p[10]||[],m=V.length>1,v=V[vi]||{url:p[6],name:""},t=m?(v.name||p[1]+" #"+(vi+1)):p[1],out=p[8]===false;
- d.innerHTML='<div class="dh" style="border:0"><button class="sh" id="psh" aria-label="Share">⤴</button><button class="x" id="px" aria-label="Close">✕</button></div><div><div class="pimg"><img src="'+v.url+'" alt="'+esc(t)+'">'+(m?'<button class="l" id="pl" aria-label="Previous">‹</button><button class="r" id="pr" aria-label="Next">›</button>':'')+'</div>'+(m?'<div class="thr">'+V.map(function(x,j){return'<img data-t="'+j+'" class="'+(j===vi?"on":"")+'" src="'+(x.thumb||x.url)+'" alt="">'}).join("")+'</div>':'')+'<div class="pt"><h1>'+esc(t)+'</h1><hr><div class="em2">'+esc(emo(p[0]))+'</div><div class="ch"><em>'+(out?"Out of stock":"In stock")+'</em><em>'+esc(p[0])+'</em></div>'+(p[4]?'<p class="txt">'+esc(p[4])+'</p>':'')+(p[5].length?'<p class="txt">For buyers 18 or older.</p>':'')+'</div></div><div class="ft2"><button class="pri" id="pa"'+(out?' disabled style="opacity:.5"':'')+'>'+(out?"Out of Stock":m?"Select Options":"Add To Cart")+'</button></div>';
+ function r(){var p=P[i],V=p[10]||[],m=V.length>1,v=V[vi]||{url:p[6],name:""},t=p[1],out=p[8]===false;
+ d.innerHTML='<div class="dh" style="border:0"><button class="sh" id="psh" aria-label="Share">⤴</button><button class="x" id="px" aria-label="Close">✕</button></div><div><div class="pimg"><img src="'+v.url+'" alt="'+esc(t)+'">'+(m?'<button class="l" id="pl" aria-label="Previous">‹</button><button class="r" id="pr" aria-label="Next">›</button>':'')+'</div>'+(m?'<div class="thr">'+V.map(function(x,j){return'<img data-t="'+j+'" class="'+(j===vi?"on":"")+'" src="'+(x.thumb||x.url)+'" alt="">'}).join("")+'</div>':'')+'<div class="pt"><h1>'+esc(t)+'</h1>'+(p[11]?'<div class="pp">'+money(p[11])+'</div>':'')+'<hr><div class="em2">'+esc(emo(p[0]))+'</div><div class="ch"><em>'+(out?"Out of stock":"In stock")+'</em><em>'+esc(p[0])+'</em></div>'+(p[4]?'<p class="txt">'+esc(p[4])+'</p>':'')+(p[5].length?'<p class="txt">For buyers 18 or older.</p>':'')+'</div></div><div class="ft2"><button class="pri" id="pa"'+(out?' disabled style="opacity:.5"':'')+'>'+(out?"Out of Stock":"Add To Cart")+'</button></div>';
  $("px").onclick=function(){d.close()};
  if(m){$("pl").onclick=function(){vi=(vi-1+V.length)%V.length;r()};$("pr").onclick=function(){vi=(vi+1)%V.length;r()};
   Array.prototype.forEach.call(d.querySelectorAll("[data-t]"),function(x){x.onclick=function(){vi=+x.dataset.t;r()}});
   var on=d.querySelector(".thr .on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"})}
- $("pa").onclick=function(){if(m)showOpts(i,vi);else add(i)};
+ $("pa").onclick=function(){add(i)};
  $("psh").onclick=function(){var u={title:p[1],text:p[1]+" – Timi’s Oppa Bite",url:location.href.split("#")[0]};if(navigator.share){navigator.share(u).catch(function(){})}else{try{navigator.clipboard.writeText(u.text+" "+u.url).then(function(){toast("Link copied")})}catch(e){toast("Copy the page address to share")}}}}
  var sx=0;d.ontouchstart=function(e){sx=e.touches[0].clientX};
  d.ontouchend=function(e){var V=P[i][10]||[];if(V.length>1&&e.target.closest(".pimg")){var x=e.changedTouches[0].clientX-sx;if(Math.abs(x)>50){vi=(vi+(x<0?1:-1)+V.length)%V.length;r()}}};
@@ -294,15 +297,15 @@ $("mi").onclick=info;
 function thumbs(){return'<span class="th">'+Object.keys(cart).slice(0,3).map(function(k){var c=ci(k);return c?'<img src="'+c.img+'" alt="">':''}).join("")+'</span>'}
 function cartUI(){var ks=Object.keys(cart).filter(function(k){return ci(k)}),d=$("cg");
  if(!ks.length){d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>0 Items</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd" style="text-align:center;padding-top:40px"><p class="note">Your cart is empty.</p><button class="pri" id="cs2">Continue shopping</button></div>';$("cx").onclick=$("cs2").onclick=function(){d.close()};return}
- d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>'+items(total())+'</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd"><p class="note">Review your items and proceed to checkout when you’re ready</p><div class="ci">'+ks.map(function(k){var c=ci(k);return'<div class="ln"><img src="'+c.img+'" alt=""><div class="mid"><b>'+esc(c.name)+'</b><div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+cart[k]+'</span><button data-p="'+k+'" aria-label="More">+</button><button class="tr" data-d="'+k+'" aria-label="Remove">🗑</button></div></div></div>'}).join("")+'</div></div><div class="ft2"><div class="sum"><span>Items</span>'+thumbs()+'<b style="color:var(--ink);font-weight:600">'+items(total())+'</b></div><div class="two"><button class="gry" id="cc">Clear Cart</button><button class="pri" id="cp">Proceed</button></div></div>';
+ d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>'+items(total())+'</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd"><p class="note">Review your items and proceed to checkout when you’re ready</p><div class="ci">'+ks.map(function(k){var c=ci(k);return'<div class="ln"><img src="'+c.img+'" alt=""><div class="mid"><b>'+esc(c.name)+'</b>'+(c.price?'<div class="pp">'+money(c.price)+' each</div>':'')+'<div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+cart[k]+'</span><button data-p="'+k+'" aria-label="More">+</button><button class="tr" data-d="'+k+'" aria-label="Remove">🗑</button></div></div></div>'}).join("")+'</div></div><div class="ft2"><div class="sum"><span>Items</span>'+thumbs()+'<b style="color:var(--ink);font-weight:600">'+items(total())+'</b></div>'+(tp()?'<div class="tot"><span>Total</span><span>'+money(tp())+'</span></div>':'')+'<div class="two"><button class="gry" id="cc">Clear Cart</button><button class="pri" id="cp">Proceed</button></div></div>';
  $("cx").onclick=function(){d.close()};
  $("cc").onclick=function(){if(confirm("Clear your whole cart?")){var o=Object.keys(cart);o.forEach(function(k){delete cart[k]});saveCart();draw();cartUI()}};
  $("cp").onclick=function(){$("cg").close();checkout()}}
 $("cg").addEventListener("click",function(e){var b=e.target.closest("[data-p],[data-m],[data-d]");if(!b)return;if(b.dataset.p!==undefined)bump(b.dataset.p,1);else if(b.dataset.m!==undefined)bump(b.dataset.m,-1);else setQty(b.dataset.d,0)});
 $("cb").onclick=function(){cartUI();openD("cg")};
 /* checkout */
-function orderMsg(enq){var m=enq?"Hello Timi’s Oppa Bite! I have a question about these items:\n":"Hello Timi’s Oppa Bite! I’d like to order:\n";Object.keys(cart).forEach(function(k){var c=ci(k);if(c)m+="• "+cart[k]+" × "+c.name+"\n"});
- return m+"\nName: "+inf.n+"\nWhatsApp: "+(inf.p?phoneFmt(inf.p):"")+(inf.e?"\nEmail: "+inf.e:"")+"\nGet my order by: "+inf.m+(inf.m==="Delivery"&&inf.a?"\nMy address: "+inf.a:"")+"\n\nThank you!"}
+function orderMsg(enq){var m=enq?"Hello Timi’s Oppa Bite! I have a question about these items:\n":"Hello Timi’s Oppa Bite! I’d like to order:\n";Object.keys(cart).forEach(function(k){var c=ci(k);if(c)m+="• "+cart[k]+" × "+c.name+(c.price?" ("+money(c.price*cart[k])+")":"")+"\n"});
+ return m+(tp()?"\nTotal: "+money(tp()):"")+"\nName: "+inf.n+"\nWhatsApp: "+(inf.p?phoneFmt(inf.p):"")+(inf.e?"\nEmail: "+inf.e:"")+"\nGet my order by: "+inf.m+(inf.m==="Delivery"&&inf.a?"\nMy address: "+inf.a:"")+"\n\nThank you!"}
 function wa(enq){window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(orderMsg(enq)),"_blank")}
 function checkout(){var d=$("kg");if(!total()){toast("Your cart is empty");return}
  d.innerHTML='<div class="dh"><h3>Purchase Information</h3><button class="x" id="kx" aria-label="Close">✕</button></div><div class="bar"><i></i></div><div class="bd"><div class="info">We’ll confirm your order, the price and delivery with you on WhatsApp.</div><div class="sc"><div style="display:flex;align-items:center;gap:10px">'+thumbs()+'<div><small>'+items(total()).toLowerCase()+'</small><b>Your order</b></div></div><button class="back" id="kb">‹ Back to Cart</button></div><h4>Your Details</h4><input class="fld" id="kn" placeholder="Full Name" value="'+esc(inf.n)+'" autocomplete="name"><div class="ph2"><span>🇳🇬 +234</span><input id="kp" type="tel" placeholder="Your Whatsapp Number" value="'+esc(inf.p)+'"></div><input class="fld" id="ke" type="email" placeholder="Email Address" value="'+esc(inf.e)+'"><h4>How would you like to get your order?</h4>'+
@@ -349,7 +352,7 @@ function adminUI(){var d=$("adg");
 function adProducts(){var b=$("ab");
  b.innerHTML='<button class="pri" id="an">＋ Add product</button><div id="ac">'+["All"].concat(cats).map(function(c){var n=DBROWS.filter(function(x){return c==="All"||x.category===c}).length;return'<button data-ac="'+esc(c)+'" aria-pressed="'+(c===acat)+'">'+esc(c)+' ('+n+')</button>'}).join("")+'</div><input class="fld" id="as" placeholder="Search products" value="'+esc(aq)+'"><div id="al"></div>';
  function fill(){var rows=DBROWS.filter(function(x){return(acat==="All"||x.category===acat)&&(!aq||x.name.toLowerCase().indexOf(aq)>=0)});
-  $("al").innerHTML=rows.length?rows.map(function(x){var n=(x.product_images||[]).length||1;return'<div class="arow"><img src="'+esc(x.thumb_url||x.image_url||"")+'" alt=""><div class="mid"><b>'+esc(x.name)+'</b><small>'+esc(x.category)+' · '+n+' photo'+(n===1?"":"s")+(x.in_stock?"":" · Out of stock")+'</small><div class="ab"><button data-es="'+x.id+'">Edit</button><button data-st="'+x.id+'">'+(x.in_stock?"Mark out":"Mark in")+'</button><button class="del" data-dl="'+x.id+'">Delete</button></div></div></div>'}).join(""):'<p class="note" style="margin-top:14px">No products here yet. Tap “Add product”.</p>'}
+  $("al").innerHTML=rows.length?rows.map(function(x){var n=(x.product_images||[]).length||1;return'<div class="arow"><img src="'+esc(x.thumb_url||x.image_url||"")+'" alt=""><div class="mid"><b>'+esc(x.name)+'</b><small>'+esc(x.category)+(x.price?' · '+money(x.price):'')+' · '+n+' photo'+(n===1?"":"s")+(x.in_stock?"":" · Out of stock")+'</small><div class="ab"><button data-es="'+x.id+'">Edit</button><button data-st="'+x.id+'">'+(x.in_stock?"Mark out":"Mark in")+'</button><button class="del" data-dl="'+x.id+'">Delete</button></div></div></div>'}).join(""):'<p class="note" style="margin-top:14px">No products here yet. Tap “Add product”.</p>'}
  fill();
  $("as").oninput=function(){aq=this.value.trim().toLowerCase();fill()};
  function row(id){return DBROWS.filter(function(x){return x.id===id})[0]}
@@ -364,14 +367,14 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
  if(!imgs.length&&x.image_url)imgs=[{id:null,name:"",url:x.image_url,turl:x.thumb_url,path:x.image_path,tpath:x.thumb_path}];
  if(!imgs.length)imgs=[{id:null,name:"",url:"",file:null}];
  b.onclick=null;
- b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="pe"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos and types</h4><p class="note">One photo for a normal product. Add more photos if it comes in different types or flavors, and give each photo its own name.</p><div id="pr"></div><button class="gry" id="pad" style="margin-bottom:14px">＋ Add another photo / type</button><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
+ b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="pe"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos</h4><p class="note">Add as many photos of this product as you want. They all share the product name and price.</p><div id="pr"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
  function pe(t){$("pe").innerHTML='<p class="err">'+esc(t)+'</p>'}
- function rr(){$("pr").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><input class="fld" data-n="'+j+'" placeholder="'+(imgs.length>1?"Name of this type":"Type name (optional)")+'" value="'+esc(m.name)+'"><label class="fbtn">'+(src?"Change photo":"Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
+ function rr(){$("pr").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><div style="font-size:.85rem;color:var(--gr);margin-bottom:8px">Photo '+(j+1)+'</div><label class="fbtn">'+(src?"Change photo":"Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
  rr();
  $("pr").oninput=function(e){var n=e.target.dataset.n;if(n!==undefined)imgs[+n].name=e.target.value};
  $("pr").onchange=function(e){var f=e.target.dataset.f;if(f!==undefined&&e.target.files[0]){var m=imgs[+f];m.file=e.target.files[0];m.prev=URL.createObjectURL(m.file);rr()}};
  $("pr").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rr()}};
- $("pad").onclick=function(){imgs.push({id:null,name:"",url:"",file:null});rr()};
+ $("pmulti").onchange=function(e){var fs=Array.prototype.slice.call(e.target.files);if(!fs.length)return;imgs=imgs.filter(function(m){return m.id||m.url||m.file});fs.forEach(function(f){imgs.push({id:null,name:"",url:"",file:f,prev:URL.createObjectURL(f)})});e.target.value="";rr()};
  $("fc").onclick=function(){adProducts()};
  function markCat(){var v=$("fct").value.trim();Array.prototype.forEach.call($("cch").children,function(c){c.className=c.dataset.cc===v?"on":""})}
  $("cch").onclick=function(e){var t=e.target.closest("[data-cc]");if(t){$("fct").value=t.dataset.cc;markCat()}};
@@ -380,7 +383,7 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
   if(!nm||!ct){pe("Please enter a name and a category.");return}
   if(imgs.some(function(m){return!m.file&&!m.url})){pe("Every row needs a photo.");return}
   btn.disabled=true;btn.textContent="Saving…";
-  try{var base={name:nm,category:ct,description:$("fds").value.trim(),in_stock:$("fin").checked,adult:$("fad").checked},pid=x.id;
+  try{var base={name:nm,category:ct,description:$("fds").value.trim(),price:Number($("fpr").value)||0,in_stock:$("fin").checked,adult:$("fad").checked},pid=x.id;
    if(pid){var a=await sb.from("products").update(base).eq("id",pid);if(a.error)throw a.error}
    else{base.sort_order=DBROWS.length;var c=await sb.from("products").insert(base).select("id").single();if(c.error)throw c.error;pid=c.data.id;x.id=pid}
    for(var g=0;g<gone.length;g++){await sb.from("product_images").delete().eq("id",gone[g].id);rm([gone[g].path,gone[g].tpath])}
