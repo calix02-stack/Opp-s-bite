@@ -160,7 +160,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .ab{display:flex;gap:6px;margin-top:6px}.ab button{border:1px solid var(--ln);background:#fff;border-radius:8px;padding:5px 10px;font-size:.78rem;font-weight:600}
 .ab .del{color:#c0143c;border-color:#f3c0c8}
 .prow{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--ln);border-radius:12px;padding:8px;margin-bottom:8px}
-.pth{width:60px;height:60px;border-radius:10px;background:#f1f1f3;display:grid;place-items:center;overflow:hidden;flex:none}
+.lb{font-size:.75rem;font-weight:600;color:var(--gr);margin:0 0 3px}.pth{width:72px;height:72px;border-radius:10px;background:#f1f1f3;display:grid;place-items:center;overflow:hidden;flex:none}
 .pth img{width:100%;height:100%;object-fit:cover}
 .pmid{flex:1;min-width:0}.pmid .fld{margin-bottom:6px;padding:9px 10px;font-size:.88rem}
 .fbtn{display:inline-block;border:1px solid var(--pu);color:var(--dk);border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:600;cursor:pointer}
@@ -175,6 +175,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <button id="cb" aria-label="Cart"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg><b id="cn">0</b></button></div></header>
 <div id="vHome"><section class="hero"><div class="wm">Timi’s Oppa Bite</div><h1>Hi there! 👋 What are you shopping for today?</h1><form id="hf" class="sbox"><input id="hq" type="search" placeholder="Find Products" aria-label="Find Products"><button type="submit" aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M20 20l-3.5-3.5"/></svg></button></form></section>
 <div class="tiles" id="tiles"></div>
+<section class="hot" id="again" hidden></section>
 <section class="hot"><div class="ph"><h2>Hottest Items</h2><button class="allp" id="ap">All Products <span>→</span></button></div><div class="grid" id="hgrid"></div></section>
 <section class="cwrap"><h2>Categories</h2><div class="car" id="car"></div><div class="prog"><i id="pt"></i></div></section></div>
 <div id="vShop" hidden><section class="find"><div class="sbox"><input id="q" type="search" placeholder="Find Products" aria-label="Find Products"><span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M20 20l-3.5-3.5"/></svg></span></div></section>
@@ -236,7 +237,8 @@ function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
    var im=(x.product_images||[]).slice().sort(function(a,b){return a.sort_order-b.sort_order}).map(function(m){return{name:m.name||"",url:m.image_url,thumb:m.thumb_url||m.image_url,price:Number(m.price)||0}});
    if(!im.length&&x.image_url)im=[{name:"",url:x.image_url,thumb:x.thumb_url||x.image_url,price:0}];
    return [x.category,x.name,"","",x.description||"",x.adult?["18+"]:[],im[0]?im[0].url:"",x.id,x.in_stock,im[0]?im[0].thumb:"",im,Number(x.price)||0]})}
-  loaded=true;buildCats();restoreCart();tiles();draw();if(cb)cb()})}
+  loaded=true;buildCats();restoreCart();tiles();draw();openHash();if(cb)cb()})}
+function openHash(){var m=/^#p-(.+)$/.exec(location.hash);if(!m||openHash.d)return;var id=decodeURIComponent(m[1]);P.forEach(function(p,i){if(String(p[7])===id&&!openHash.d){openHash.d=1;showP(i)}})}
 /* ---------- views ---------- */
 var view="home";
 function setView(v){view=v;$("vHome").hidden=v!=="home";$("vShop").hidden=v!=="shop";scrollTo(0,0)}
@@ -258,7 +260,7 @@ function card(i){var p=P[i],s=pdisp(p);return'<div class="pc"><div class="im" da
 function draw(){var h="",n=0;
  P.forEach(function(p,i){if(cur!=="All"&&p[0]!==cur)return;if(q&&(p[0]+" "+p[1]+" "+(p[10]||[]).map(function(v){return v.name}).join(" ")).toLowerCase().indexOf(q)<0)return;n++;h+=card(i)});
  $("grid").innerHTML=h;$("hgrid").innerHTML=P.slice(0,8).map(function(p,i){return card(i)}).join("");
- var e=$("none");e.hidden=!!n;e.textContent=!loaded?"Loading products…":(P.length?"No products found.":"No products yet.");$("ddt").textContent=cur==="All"?"All Categories":cur;$("cn").textContent=total()}
+ var e=$("none");e.hidden=!!n;e.textContent=!loaded?"Loading products…":(P.length?"No products found.":"No products yet.");$("ddt").textContent=cur==="All"?"All Categories":cur;$("cn").textContent=total();againUI()}
 function setQty(k,n){if(n<=0)delete cart[k];else cart[k]=Math.min(n,99);saveCart();var i=parseInt(k);Array.prototype.forEach.call(document.querySelectorAll('.act[data-k="'+i+'"]'),function(a){a.innerHTML=ctl(i)});$("cn").textContent=total();if($("cg").open)cartUI()}
 function bump(k,d){if(d>0&&navigator.vibrate)navigator.vibrate(15);setQty(k,(cart[k]||0)+d)}
 function add(k){if(P[parseInt(k)][8]===false){toast("Sorry, this item is out of stock");return}bump(String(k),1);toast("Added to cart")}
@@ -271,6 +273,11 @@ function ddOpen(){$("ddl").innerHTML=["All"].concat(cats).map(function(c){return
 $("ddb").onclick=function(e){e.stopPropagation();$("ddl").hidden?ddOpen():$("ddl").hidden=true};
 $("ddl").onclick=function(e){var b=e.target.closest("[data-c]");if(b){cur=b.dataset.c;$("ddl").hidden=true;draw()}};
 document.addEventListener("click",function(e){if(!e.target.closest("#ddl"))$("ddl").hidden=true});
+function againUI(){var L=load("tob10-last",{}),ks=[],el=$("again"),n=0;
+ for(var r in L){var s=r.split(":"),ix=-1;P.forEach(function(p,i){if(String(p[7])===s[0])ix=i});if(ix<0)continue;var k=ix+(s[1]!==undefined?":"+s[1]:"");if(ci(k)&&P[ix][8]!==false){ks.push([k,L[r]]);n+=L[r]}}
+ if(!ks.length){el.hidden=true;return}
+ el.hidden=false;el.innerHTML='<div class="ph"><h2>Order again</h2></div><div class="ci" style="padding:12px"><div class="sum"><span class="th">'+ks.slice(0,4).map(function(a){return'<img src="'+ci(a[0]).img+'" alt="">'}).join("")+'</span><b style="color:var(--ink);font-weight:600">'+items(n)+' from your last order</b></div><button class="pri" id="agb">Add them to my cart</button></div>';
+ $("agb").onclick=function(){ks.forEach(function(a){setQty(a[0],Math.max(cart[a[0]]||0,a[1]))});toast("Added from your last order");cartUI();openD("cg")}}
 /* options sheet: each type/flavor has its own photo, name and price */
 function showOpts(i){var p=P[i],V=p[10]||[],d=$("og"),sel={};V.forEach(function(v,j){if(cart[i+":"+j])sel[j]=1});
  d.innerHTML='<div class="dh" style="background:#f8f8f8"><h3>Select Options</h3><button class="x" id="ox" aria-label="Close">✕</button></div><div class="bd"><div class="ci">'+V.map(function(v,j){return'<div class="opt2" data-j="'+j+'" role="checkbox" aria-checked="'+!!sel[j]+'"><span class="rd"></span><img src="'+(v.thumb||v.url)+'" alt=""><div><b>'+esc(v.name||p[1]+" #"+(j+1))+'</b><small>'+money(vp(p,j))+'</small></div></div>'}).join("")+'</div></div><div class="ft2"><button class="pri" id="ou">Update Cart</button></div>';
@@ -287,7 +294,7 @@ function showP(i){var d=$("pg"),vi=0;
   Array.prototype.forEach.call(d.querySelectorAll("[data-t]"),function(x){x.onclick=function(){vi=+x.dataset.t;r()}});
   var on=d.querySelector(".thr .on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"})}
  $("pa").onclick=function(){add(m?i+":"+vi:i)};
- $("psh").onclick=function(){var u={title:p[1],text:p[1]+" – Timi’s Oppa Bite",url:location.href.split("#")[0]};if(navigator.share){navigator.share(u).catch(function(){})}else{try{navigator.clipboard.writeText(u.text+" "+u.url).then(function(){toast("Link copied")})}catch(e){toast("Copy the page address to share")}}}}
+ $("psh").onclick=function(){var u={title:p[1],text:p[1]+" – Timi’s Oppa Bite",url:location.href.split("#")[0]+"#p-"+encodeURIComponent(p[7])};if(navigator.share){navigator.share(u).catch(function(){})}else{try{navigator.clipboard.writeText(u.text+" "+u.url).then(function(){toast("Link copied")})}catch(e){toast("Copy the page address to share")}}}}
  var sx=0;d.ontouchstart=function(e){sx=e.touches[0].clientX};
  d.ontouchend=function(e){var V=P[i][10]||[];if(V.length>1&&e.target.closest(".pimg")){var x=e.changedTouches[0].clientX-sx;if(Math.abs(x)>50){vi=(vi+(x<0?1:-1)+V.length)%V.length;r()}}};
  r();openD("pg")}
@@ -328,7 +335,7 @@ function checkout(){var d=$("kg");if(!total()){toast("Your cart is empty");retur
  $("kx").onclick=function(){d.close()};$("kb").onclick=function(){d.close();cartUI();openD("cg")};
  function need(){rd();if(!inf.n){toast("Please enter your full name");$("kn").focus();return false}if(inf.p.replace(/\D/g,"").length<10){toast("Please enter your WhatsApp number");$("kp").focus();return false}return true}
  $("kq").onclick=function(){if(need())wa(true)};
- $("kc").onclick=function(){if(need()){wa(false);toast("Opening WhatsApp to send your order…",2600)}};
+ $("kc").onclick=function(){if(need()){wa(false);save("tob10-last",raw);toast("Opening WhatsApp to send your order…",2600)}};
  openD("kg")}
 /* ---------- admin ---------- */
 function adminEntry(){if(!SB_ON){toast("Admin is not connected yet. Add your Supabase details to the page first.",3500);return}if(isAdmin){adminUI();return}adminLogin(load("tob8-made",false)?"in":"up")}
@@ -376,13 +383,13 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
  if(!imgs.length&&x.image_url)imgs=[{id:null,name:"",price:"",url:x.image_url,turl:x.thumb_url,path:x.image_path,tpath:x.thumb_path}];
  if(!imgs.length)imgs=[{id:null,name:"",price:"",url:"",file:null}];
  b.onclick=null;
- b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="pe"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Main price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos / options</h4><p class="note">One photo = a normal product. Add more photos to make other types or flavors of the same product: name each one and give it its own price. Customers will see “Select Options”. A blank option price uses the main price.</p><div id="pr"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
- function pe(t){$("pe").innerHTML='<p class="err">'+esc(t)+'</p>'}
- function rr(){$("pr").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><input class="fld" data-n="'+j+'" placeholder="Name / flavor (e.g. Strawberry)" value="'+esc(m.name)+'"><input class="fld" data-pp="'+j+'" type="number" inputmode="decimal" min="0" placeholder="Price for this option (₦)" value="'+esc(m.price||"")+'"><label class="fbtn">'+(src?"Change photo":"Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
+ b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="ape"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Main price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label><h4>Photos / options</h4><p class="note">One photo = a normal product. Add more photos to make other types or flavors of the same product: name each one and give it its own price. Customers will see “Select Options”. A blank option price uses the main price.</p><div id="phl"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
+ function pe(t){$("ape").innerHTML='<p class="err">'+esc(t)+'</p>'}
+ function rr(){$("phl").innerHTML=imgs.map(function(m,j){var src=m.prev||m.turl||m.url;return'<div class="prow"><div class="pth">'+(src?'<img src="'+esc(src)+'" alt="">':'<span>📷</span>')+'</div><div class="pmid"><div class="lb">Name (flavor / type)</div><input class="fld" data-n="'+j+'" placeholder="e.g. Strawberry" value="'+esc(m.name)+'"><div class="lb">Price (₦)</div><input class="fld" data-pp="'+j+'" type="number" inputmode="decimal" min="0" placeholder="Leave blank to use main price" value="'+esc(m.price||"")+'"><label class="fbtn">'+(src?"Change photo":"📷 Choose photo")+'<input type="file" accept="image/*" data-f="'+j+'" hidden></label></div>'+(imgs.length>1?'<button class="tr2" data-r="'+j+'" aria-label="Remove">✕</button>':'')+'</div>'}).join("")}
  rr();
- $("pr").oninput=function(e){var n=e.target.dataset.n,pp=e.target.dataset.pp;if(n!==undefined)imgs[+n].name=e.target.value;if(pp!==undefined)imgs[+pp].price=e.target.value};
- $("pr").onchange=function(e){var f=e.target.dataset.f;if(f!==undefined&&e.target.files[0]){var m=imgs[+f];m.file=e.target.files[0];m.prev=URL.createObjectURL(m.file);rr()}};
- $("pr").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rr()}};
+ $("phl").oninput=function(e){var n=e.target.dataset.n,pp=e.target.dataset.pp;if(n!==undefined)imgs[+n].name=e.target.value;if(pp!==undefined)imgs[+pp].price=e.target.value};
+ $("phl").onchange=function(e){var f=e.target.dataset.f;if(f!==undefined&&e.target.files[0]){var m=imgs[+f];m.file=e.target.files[0];m.prev=URL.createObjectURL(m.file);rr()}};
+ $("phl").onclick=function(e){var r=e.target.closest("[data-r]");if(r){var m=imgs.splice(+r.dataset.r,1)[0];if(m.id)gone.push(m);rr()}};
  $("pmulti").onchange=function(e){var fs=Array.prototype.slice.call(e.target.files);if(!fs.length)return;imgs=imgs.filter(function(m){return m.id||m.url||m.file});fs.forEach(function(f){imgs.push({id:null,name:"",price:"",url:"",file:f,prev:URL.createObjectURL(f)})});e.target.value="";rr()};
  $("fc").onclick=function(){adProducts()};
  function markCat(){var v=$("fct").value.trim();Array.prototype.forEach.call($("cch").children,function(c){c.className=c.dataset.cc===v?"on":""})}
