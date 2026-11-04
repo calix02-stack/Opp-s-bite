@@ -10,33 +10,37 @@ body{margin:0;font:15px/1.4 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans
 button{font:inherit;cursor:pointer;color:inherit}
 [hidden]{display:none!important}
 svg{display:block}
+img{image-rendering:auto}
 #top{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--ln)}
 .cu{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:.85rem;text-decoration:none;color:var(--ink);background:#f3f3f5;border-radius:999px;padding:5px 12px 5px 6px}
 .cu i{width:24px;height:24px;border-radius:50%;background:#25D366;color:#fff;display:grid;place-items:center;font-style:normal;font-size:.8rem}
 .cur{font-weight:600;font-size:.85rem}
-header{position:sticky;top:0;z-index:20;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;box-shadow:0 1px 8px rgba(0,0,0,.08)}
+header{position:sticky;top:0;z-index:20;background:#fff;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:8px 14px;box-shadow:0 1px 8px rgba(0,0,0,.08)}
 header button{background:none;border:0;padding:4px;position:relative}
+.hb{justify-self:start}
 .hb i{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;border-radius:2px}
 .logo{width:38px;height:38px;border-radius:50%;background:#ececef;display:grid;place-items:center;font-weight:800;font-size:.62rem;color:var(--dk);border:0;padding:0;cursor:pointer}
-.hr{display:flex;gap:8px;align-items:center}
+.hr{display:flex;gap:8px;align-items:center;justify-self:end}
 .ic{width:36px;height:36px;border-radius:50%;background:#f3f3f5!important;display:grid;place-items:center}
 #cn{position:absolute;top:-3px;right:-5px;min-width:18px;height:18px;border-radius:9px;background:var(--pu);color:#fff;font-size:.65rem;font-weight:700;display:grid;place-items:center;padding:0 4px}
-.hero{position:relative;overflow:hidden;background:#8d8d92;text-align:center;color:#fff;padding:50px 16px 30px}
-.wm{position:absolute;left:0;right:0;top:48%;transform:translateY(-62%);font-weight:800;font-size:clamp(1.9rem,10vw,3.2rem);color:var(--dk);line-height:1;pointer-events:none}
+/* hero */
+.hero{position:relative;overflow:hidden;background:#8d8d92;text-align:center;color:#fff;padding:44px 16px 34px}
+.wm{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);font-weight:800;font-size:clamp(1.9rem,10.5vw,3.3rem);color:var(--dk);line-height:1;pointer-events:none;white-space:nowrap}
 .hero h1,.hero form{position:relative}
-.hero h1{margin:0 0 18px;font-size:1.5rem;line-height:1.3;font-weight:700}
+.hero h1{margin:0 0 26px;font-size:1.55rem;line-height:1.3;font-weight:600}
 .sbox{display:flex;align-items:center;background:#fff;border:1px solid var(--ln);border-radius:10px;padding:5px 6px 5px 14px;gap:8px}
 .sbox input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:.95rem;color:var(--ink);background:none;padding:7px 0}
 .sbox span,.sbox button{width:36px;height:36px;border-radius:8px;background:#f3f3f5;display:grid;place-items:center;border:0;padding:0}
-.tiles{padding:24px 14px 10px}
-.allc,.cc,.cr{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;background:#222;color:#fff}
-.allc{height:230px}.cc{height:185px}
+/* tiles */
+.tiles{padding:26px 14px 10px}
+.allc,.cc,.cr{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;background:#222;color:#fff}
+.allc{aspect-ratio:645/370}.cc{aspect-ratio:1/1}
 .allc img,.cc img,.cr img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;background:linear-gradient(0deg,rgba(0,0,0,.6),rgba(0,0,0,.08) 60%)}
-.ov b{font-size:1.15rem;font-weight:700}.ov span{font-size:.85rem;opacity:.95}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;background:linear-gradient(0deg,rgba(0,0,0,.55),rgba(0,0,0,.05) 55%)}
+.ov b{font-size:1.2rem;font-weight:700;line-height:1.2}.ov span{font-size:.9rem;opacity:.95;margin-top:2px}
 .bg{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center}
-.tg2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 10px;margin-top:14px}
-.hot{padding:26px 14px 10px}
+.tg2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 12px;margin-top:14px}
+.hot{padding:28px 14px 10px}
 .allp{display:flex;align-items:center;gap:8px;border:1px solid var(--ln);background:#fff;border-radius:14px;padding:10px 14px;font-weight:500;font-size:.9rem}
 .find{background:#f4f4f6;padding:22px 14px}
 main{padding:20px 14px 10px}
@@ -45,33 +49,35 @@ main{padding:20px 14px 10px}
 #ddb{display:flex;align-items:center;gap:8px;border:1px solid var(--ln);background:#fff;border-radius:14px;padding:8px 12px;font-weight:500;font-size:.85rem}
 #ddl{position:absolute;right:0;top:44px;width:min(80%,260px);max-height:60vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.2);z-index:15;padding:4px 0}
 #ddl button{display:block;width:100%;border:0;background:none;text-align:left;padding:11px 14px;border-bottom:1px solid #f0f0f2;font-size:.9rem}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px 12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 12px}
 @media(min-width:640px){.grid,.tg2{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:960px){.grid{grid-template-columns:repeat(4,1fr)}}
 @media(min-width:700px){main,.find,.tiles,.hot,.cwrap,header,#top,footer{padding-left:max(14px,calc((100vw - 900px)/2));padding-right:max(14px,calc((100vw - 900px)/2))}}
 .im{aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#f1f1f3;cursor:pointer}
 .im img{width:100%;height:100%;object-fit:cover;display:block}
-.nm{margin:10px 0 4px;color:var(--gr);font-size:.95rem;line-height:1.3;min-height:2.4em}
-.pr{font-weight:700;font-size:1rem;margin:0 0 10px;color:var(--ink)}
+.nm{margin:12px 0 4px;color:var(--gr);font-size:1rem;line-height:1.3;min-height:2.6em}
+.pr{font-weight:700;font-size:1.02rem;margin:0 0 12px;color:var(--ink)}
 .pr.np{color:var(--gr);font-weight:500}
-.btn{width:100%;border:1.5px solid var(--pu);background:#fff;color:#52525b;border-radius:10px;height:42px;font-weight:600;font-size:.88rem}
+.btn{width:100%;border:1.5px solid var(--pu);background:#fff;color:#52525b;border-radius:12px;height:44px;font-weight:600;font-size:.9rem}
 .btn:active{background:var(--pu);color:#fff}
-.stp{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--pu);border-radius:10px;height:42px;overflow:hidden;background:#fff}
+.stp{display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--pu);border-radius:12px;height:44px;overflow:hidden;background:#fff}
 .stp button{width:44px;height:100%;border:0;background:var(--tn);color:var(--dk);font-size:1.2rem;font-weight:700}
 .stp span{font-weight:700;font-size:.9rem}
 #none{text-align:center;color:var(--gr);padding:30px 0}
-.cwrap{padding:30px 14px 36px}
-.car{display:flex;gap:14px;overflow-x:auto;margin:16px -14px 0;padding:0 14px;scrollbar-width:none}
-.cr{flex:none;width:150px;height:170px}
-.cr b{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.28);font-size:1rem;font-weight:700;text-align:center;padding:8px}
-.prog{height:5px;background:#efeff1;border-radius:3px;margin-top:16px;position:relative}
+.cwrap{padding:34px 14px 40px}
+.car{display:flex;gap:14px;overflow-x:auto;margin:18px -14px 0;padding:0 14px;scrollbar-width:none}
+.car::-webkit-scrollbar{display:none}
+.cr{flex:none;width:130px;aspect-ratio:258/290;border-radius:18px}
+.cr b{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.25);font-size:1.05rem;font-weight:700;text-align:center;padding:8px;line-height:1.25}
+.prog{height:5px;background:#efeff1;border-radius:3px;margin-top:18px;position:relative;overflow:hidden}
 .prog i{position:absolute;left:0;top:0;height:100%;width:30%;background:#666;border-radius:3px}
-footer{background:#f8f8f8;padding:28px 14px 34px}
-footer h3{font-size:1.05rem;margin:20px 0 8px}
-footer .lk{background:none;border:0;padding:0;color:var(--gr);font-size:.95rem}
-.ck{display:flex;align-items:center;gap:10px;color:var(--gr);margin:9px 0;font-size:.92rem}
-.ck b{width:24px;height:24px;border-radius:50%;background:#6b7a3a;color:#fff;display:grid;place-items:center;flex:none;font-size:.75rem}
-.cp{border-top:1px solid var(--ln);margin-top:20px;padding-top:16px;font-weight:600;font-size:.85rem}
+footer{background:#f8f8f8;padding:34px 14px 34px}
+footer h3{font-size:1.15rem;margin:30px 0 10px;font-weight:700}
+footer .lk{background:none;border:0;padding:0;color:var(--gr);font-size:1rem}
+.ck{display:flex;align-items:center;gap:12px;color:var(--gr);margin:12px 0;font-size:.98rem}
+.ck b{width:26px;height:26px;border-radius:50%;background:#6b7a3a;color:#fff;display:grid;place-items:center;flex:none;font-size:.8rem}
+.cp{border-top:1px solid var(--ln);margin-top:24px;padding-top:16px;font-weight:600;font-size:.85rem;display:flex;justify-content:space-between;align-items:center}
+.cp .lk{font-size:.8rem;opacity:.6}
 .noimg{background:linear-gradient(135deg,#F26A1B,#C2410C)!important}
 .em{position:absolute;inset:0;display:grid;place-items:center;font-size:2.6rem;padding-bottom:24px}
 #ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:30}
@@ -104,16 +110,13 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .sum{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;color:var(--gr);font-size:.95rem}
 .th{display:inline-flex;border:1px solid var(--ln);border-radius:999px;padding:3px 6px}
 .th img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #fff;margin-left:-9px}.th img:first-child{margin-left:0}
-.bar{height:4px;background:#e8e8ec}.bar i{display:block;height:100%;width:50%;background:var(--pu)}
-.info{background:#f2f2ee;border-radius:10px;padding:12px;color:var(--gr);margin-bottom:12px;font-size:.88rem}
+.info{background:#fff4ec;border-radius:10px;padding:12px;color:#7a3a12;margin-bottom:12px;font-size:.88rem}
 .sc{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--ln);border-radius:12px;padding:10px;margin-bottom:16px}
 .sc small{display:block;color:var(--gr);font-size:.8rem}.sc b{font-size:.95rem;font-weight:600}
 .back{border:1px solid #f4c9a8;background:var(--tn);color:var(--dk);border-radius:8px;padding:8px 12px;font-weight:600;font-size:.8rem}
 .bd h4{font-size:1rem;font-weight:600;margin:18px 0 10px;color:#3b3b3f}
 .bd h4:first-child{margin-top:4px}
 .fld{display:block;width:100%;font:inherit;font-size:.95rem;padding:13px 14px;border:1px solid var(--ln);border-radius:10px;background:#fafafa;color:var(--ink);margin-bottom:10px}
-.ph2{display:flex;align-items:center;gap:6px;border:1px solid var(--ln);border-radius:10px;background:#fafafa;padding:0 14px;margin-bottom:10px}
-.ph2 span{white-space:nowrap;font-size:.95rem;color:#444}.ph2 input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:.95rem;padding:13px 0;outline:0;color:var(--ink)}
 .opt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--ln);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer}
 .opt[aria-checked=true]{border-color:var(--pu);background:var(--tn)}
 .opt i{width:38px;height:38px;border-radius:50%;background:var(--tn);display:grid;place-items:center;font-style:normal;font-size:1.1rem;flex:none}
@@ -143,13 +146,24 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .cat-row u{width:34px;height:34px;border-radius:50%;background:#f3f3f5;display:grid;place-items:center;text-decoration:none;color:var(--dk)}
 .opt2{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer}
 .opt2+.opt2{border-top:1px solid var(--ln)}
-.opt2 img{width:48px;height:48px;border-radius:8px;object-fit:cover;flex:none}
 .opt2 div{flex:1;line-height:1.3}.opt2 b{display:block;font-weight:500;font-size:.9rem}.opt2 small{color:var(--gr);font-weight:600;font-size:.82rem}
 .rd{width:22px;height:22px;border-radius:50%;border:2px solid #cfcfd4;flex:none;display:grid;place-items:center}
 .opt2[aria-checked=true] .rd{border-color:var(--pu);background:var(--pu);box-shadow:inset 0 0 0 4px #fff}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1c1c1e;color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;font-size:.85rem;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;max-width:88vw;text-align:center}
 #toast.s{opacity:1}
 .tot{display:flex;justify-content:space-between;font-weight:700;margin-bottom:10px}
+/* more information */
+.mi{background:#f7f7f7;border-radius:18px;padding:6px 20px;margin-bottom:16px}
+.mr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0}
+.mr+.mr{border-top:1px solid var(--ln)}
+.mr b{display:block;font-size:1.05rem;font-weight:600;margin-bottom:8px}
+.mr span{font-size:1rem;color:#444}
+.mr i{width:40px;height:40px;border-radius:50%;background:var(--pu);display:grid;place-items:center;font-style:normal;font-size:1.05rem;flex:none}
+/* flying decorations */
+#fly{position:fixed;inset:0;pointer-events:none;z-index:10;overflow:hidden}
+#fly span{position:absolute;bottom:-50px;opacity:0;animation:fl linear infinite;filter:drop-shadow(0 2px 3px rgba(0,0,0,.18))}
+@keyframes fl{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}8%{opacity:.55}50%{transform:translate3d(34px,-62vh,0) rotate(170deg)}92%{opacity:.5}100%{transform:translate3d(-26px,-122vh,0) rotate(340deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){#fly{display:none}}
 /* admin */
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.gi{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#f1f1f3}.gi img{width:100%;height:100%;object-fit:cover}.gi button{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:#fff;font-size:.8rem}.cv{position:absolute;left:4px;bottom:4px;background:var(--pu);color:#fff;font-size:.65rem;font-style:normal;padding:2px 6px;border-radius:6px}
 #ac{display:flex;gap:6px;overflow-x:auto;margin:12px 0;scrollbar-width:none}
@@ -161,15 +175,13 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .ab{display:flex;gap:6px;margin-top:6px}.ab button{border:1px solid var(--ln);background:#fff;border-radius:8px;padding:5px 10px;font-size:.78rem;font-weight:600}
 .ab .del{color:#c0143c;border-color:#f3c0c8}
 .prow{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--ln);border-radius:12px;padding:8px;margin-bottom:8px}
-.lb{font-size:.75rem;font-weight:600;color:var(--gr);margin:0 0 3px}.pth{width:72px;height:72px;border-radius:10px;background:#f1f1f3;display:grid;place-items:center;overflow:hidden;flex:none}
-.pth img{width:100%;height:100%;object-fit:cover}
 .pmid{flex:1;min-width:0}.pmid .fld{margin-bottom:6px;padding:9px 10px;font-size:.88rem}
-.fbtn{display:inline-block;border:1px solid var(--pu);color:var(--dk);border-radius:8px;padding:6px 10px;font-size:.8rem;font-weight:600;cursor:pointer}
 .tr2{border:0;background:#f3f3f5;border-radius:50%;width:28px;height:28px;flex:none}
 .cch{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
 .cch button{border:1px solid var(--ln);background:#fff;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:600}
 .cch button.on{background:var(--pu);border-color:var(--pu);color:#fff}
 </style></head><body>
+<div id="fly" aria-hidden="true"></div>
 <div id="top"><a class="cu" id="cu" target="_blank" rel="noopener"><i>💬</i>Contact Us</a><span class="cur">🇳🇬 NGN</span></div>
 <header><button class="hb" id="mb" aria-label="Menu"><i></i><i></i><i></i></button><button class="logo" id="lg" aria-label="Home">TOB</button>
 <div class="hr"><button class="ic" id="sb" aria-label="Search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M20 20l-3.5-3.5"/></svg></button>
@@ -184,7 +196,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <div class="grid" id="grid"></div><p id="none" hidden></p></main></div>
 <footer><div class="logo" style="cursor:default">TOB</div><h3>Learn More</h3><button class="lk" id="mi">More Information</button>
 <h3>How to order</h3><div class="ck"><b>✓</b>Pick what you like</div><div class="ck"><b>✓</b>Add it to your cart</div><div class="ck"><b>✓</b>Send your order on WhatsApp</div>
-<div class="cp">© 2026 - Timi’s Oppa Bite</div></footer>
+<div class="cp"><span>© 2026 - Timi’s Oppa Bite</span><button class="lk" id="adm">Admin</button></div></footer>
 <div id="ov" hidden></div>
 <aside id="menu"><div class="t"><div class="logo" style="cursor:default">TOB</div><button class="x" id="mx" aria-label="Close">✕</button></div><a href="#" data-g="home">Home</a><a href="#" data-g="shop">Shop</a><a href="#" data-g="cat">Categories</a><a href="#" data-g="info">More Information</a>
 <div class="ft">© 2026 - Timi’s Oppa Bite</div></aside>
@@ -196,24 +208,25 @@ var P=[];
 var PHONE="2347066467203";
 var SB_URL="https://pomvgmukzozyycrrbdaa.supabase.co";
 var SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvbXZnbXVrem96eXljcnJiZGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM3MDIwNjYsImV4cCI6MjEwOTI3ODA2Nn0.o0xB_OCFlCRH0B_8YpF5KJhxNVZFpoTS_www4f32kTU";
+var LOCATION="Lagos & Osogbo, Nigeria",DELIVERY="Nationwide Deliveries",TIMELINE="1-3 day(s)";
 /* ==================== */
 var $=function(i){return document.getElementById(i)};
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-var BADGE='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2 1.1 2.8 2.6 1.5-.7 2.9 1 2.8-2.2 2.1-.4 3-3 .5L12 22l-2.4-1.8-3 .2-1.1-2.8-2.6-1.5.7-2.9-1-2.8 2.2-2.1.4-3 3-.5z"/><path d="M8.5 12.2l2.5 2.5 4.5-5"/></svg>',SRCH='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M20 20l-3.5-3.5"/></svg>';
-var raw=load("tob10-cart",{}),cart={},inf=load("tob9-info",{n:"",p:"",e:"",m:"Pickup",a:""}),cur="All",q="",loaded=false,isAdmin=false,DBROWS=[],BK="product-images";
+var BADGE='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2 1.1 2.8 2.6 1.5-.7 2.9 1 2.8-2.2 2.1-.4 3-3 .5L12 22l-2.4-1.8-3 .2-1.1-2.8-2.6-1.5.7-2.9-1-2.8 2.2-2.1.4-3 3-.5z"/><path d="M8.5 12.2l2.5 2.5 4.5-5"/></svg>',ARROW='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>',SRCH='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7.5"/><path d="M20 20l-3.5-3.5"/></svg>';
+var raw=load("tob10-cart",{}),cart={},inf=load("tob11-info",{n:"",m:"Pickup",a:""}),cur="All",q="",loaded=false,isAdmin=false,DBROWS=[],BK="product-images";
 var CATS=["Ramen 🍜","Cereals 🥣","Chocolate 🍫","Chips 🍟","Tteokbokki 🥘","Ice-Cream 🍨","Snacks 🥧","Cookies 🍪","Drinks 🥤","Dumplings 🥟","Oil & Sauce 🌶️","Chopstick 🥢","Gummies 🧸","Cranberry 🍬"],cats=[];
 function buildCats(){cats=CATS.slice();P.forEach(function(p){if(cats.indexOf(p[0])<0)cats.push(p[0])})}buildCats();
 function emo(c){var w=String(c).split(" ").pop();return /^[\x00-\x7f]*$/.test(w)?"":w}
-function tb(p){return p[9]||p[6]}
+/* always use the full-size photo for cards so they stay sharp */
+function tb(p){return p[6]||p[9]}
 function multi(p){return(p[12]||[]).length>0}
-/* price: always shows something. No price set -> "No price" */
 function money(n){return n>0?"NGN "+Number(n).toLocaleString("en-NG",{minimumFractionDigits:2,maximumFractionDigits:2}):"No price"}
 function vp(p,j){var v=(p[12]||[])[j];return v&&v.price>0?v.price:(p[11]||0)}
 function pdisp(p){if(!multi(p))return money(p[11]);var a=p[12].map(function(v,j){return vp(p,j)}).filter(function(n){return n>0});if(!a.length)return"No price";var lo=Math.min.apply(0,a),hi=Math.max.apply(0,a);return lo===hi?money(lo):"From "+money(lo)}
 function ci(k){var s=String(k).split(":"),p=P[+s[0]];if(!p)return null;var V=p[12]||[],j=s[1]!==undefined?+s[1]:-1,v=j>=0?V[j]:null;if(j>=0&&!v)return null;
- return{p:p,name:p[1]+(v&&v.name?" – "+v.name:""),img:tb(p),price:j>=0?vp(p,j):(p[11]||0)}}
+ return{p:p,name:p[1]+(v&&v.name?" – "+v.name:""),img:p[9]||p[6],price:j>=0?vp(p,j):(p[11]||0)}}
 function tp(){var n=0;for(var k in cart){var c=ci(k);if(c)n+=c.price*cart[k]}return n}
 function cover(c){for(var i=0;i<P.length;i++)if(P[i][0]===c)return tb(P[i]);return""}
 function cnt(c){var n=0;P.forEach(function(p){if(c==="All"||p[0]===c)n++});return n}
@@ -225,13 +238,16 @@ function toast(t,ms){var e=$("toast");e.textContent=t;e.className="s";clearTimeo
 function openD(id){var d=$(id);if(!d.open)d.showModal()}
 ["pg","og","cg","kg","ag","lg2","ig","adg"].forEach(function(id){$(id).addEventListener("click",function(e){if(e.target===$(id))$(id).close()})});
 $("cu").href="https://wa.me/"+PHONE+"?text="+encodeURIComponent("Hello Timi’s Oppa Bite! I have a question.");
-function phoneFmt(v){var d=String(v).replace(/\D/g,"");if(d.indexOf("234")===0)return"+"+d;if(d.charAt(0)==="0")d=d.slice(1);return"+234"+d}
+/* flying decorations */
+(function(){var E=["🍜","🍫","🍪","🍟","🥟","🍬","🍨","🥢","🌶️","🧸","🥤","🍡","🥘","🍙"],f=$("fly"),h="";
+ for(var i=0;i<16;i++){var s=18+Math.random()*18,d=16+Math.random()*16;h+='<span style="left:'+(Math.random()*92).toFixed(1)+'%;font-size:'+s.toFixed(0)+'px;animation-duration:'+d.toFixed(1)+'s;animation-delay:-'+(Math.random()*d).toFixed(1)+'s">'+E[i%E.length]+'</span>'}
+ f.innerHTML=h})();
 /* ---------- Supabase ---------- */
 var SB_ON=!!(SB_URL&&SB_KEY&&window.supabase),sb=null,user=null;
 if(SB_ON){sb=supabase.createClient(SB_URL,SB_KEY);
  sb.auth.getSession().then(function(r){user=r.data.session?r.data.session.user:null;acct()});
  sb.auth.onAuthStateChange(function(e,s){user=s?s.user:null;setTimeout(acct,0)})}
-function acct(){isAdmin=false;if(user&&SB_ON)sb.from("profiles").select("role").eq("id",user.id).maybeSingle().then(function(r){isAdmin=!!(r.data&&r.data.role==="admin");0})}
+function acct(){isAdmin=false;if(user&&SB_ON)sb.from("profiles").select("role").eq("id",user.id).maybeSingle().then(function(r){isAdmin=!!(r.data&&r.data.role==="admin")})}
 function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
  sb.from("products").select("*, product_images(*)").order("sort_order").order("created_at").then(function(r){
   if(r.error)toast("Could not load products",3000);else{DBROWS=r.data||[];P=DBROWS.map(function(x){
@@ -244,15 +260,16 @@ function openHash(){var m=/^#p-(.+)$/.exec(location.hash);if(!m||openHash.d)retu
 var view="home";
 function setView(v){view=v;$("vHome").hidden=v!=="home";$("vShop").hidden=v!=="shop";scrollTo(0,0)}
 function goShop(c,s){cur=c||"All";q=s||"";$("q").value=q;setView("shop");draw()}
-function tiles(){var f=P[0]?tb(P[0]):"",n=cnt("All");
- $("tiles").innerHTML='<div class="allc'+(f?'':' noimg')+'" data-go="All">'+(f?'<img src="'+f+'" alt="" loading="lazy">':'<div class="em">🛍</div>')+'<div class="ov"><b>All Items</b><span>'+n+(n===1?' Item':' Items')+' Available</span></div></div><div class="tg2">'+cats.filter(function(c){return cnt(c)>0}).map(function(c){var im=cover(c),k=cnt(c);return '<div class="cc'+(im?'':' noimg')+'" data-go="'+esc(c)+'">'+(im?'<img src="'+im+'" alt="" loading="lazy">':'<div class="em">'+esc(emo(c))+'</div>')+'<div class="ov"><b>'+esc(c)+'</b><span>'+k+(k===1?' Item':' Items')+' Available</span></div><div class="bg">'+BADGE+'</div></div>'}).join("")+'</div>';
- $("car").innerHTML=cats.map(function(c){var im=cover(c);return '<div class="cr'+(im?'':' noimg')+'" data-go="'+esc(c)+'">'+(im?'<img src="'+im+'" alt="" loading="lazy">':'<div class="em">'+esc(emo(c))+'</div>')+'<b>'+esc(c)+'</b></div>'}).join("")}
+function tiles(){var f=P[0]?tb(P[0]):"",n=cnt("All"),used=cats.filter(function(c){return cnt(c)>0});
+ $("tiles").innerHTML='<div class="allc'+(f?'':' noimg')+'" data-go="All">'+(f?'<img src="'+f+'" alt="" loading="lazy" decoding="async">':'<div class="em">🛍</div>')+'<div class="ov"><b>All Items</b><span>'+n+(n===1?' Item':' Items')+' Available</span></div><div class="bg">'+ARROW+'</div></div><div class="tg2">'+used.map(function(c){var im=cover(c),k=cnt(c);return '<div class="cc'+(im?'':' noimg')+'" data-go="'+esc(c)+'">'+(im?'<img src="'+im+'" alt="" loading="lazy" decoding="async">':'<div class="em">'+esc(emo(c))+'</div>')+'<div class="ov"><b>'+esc(c)+'</b><span>'+k+(k===1?' Item':' Items')+' Available</span></div><div class="bg">'+BADGE+'</div></div>'}).join("")+'</div>';
+ $("car").innerHTML=used.map(function(c){var im=cover(c);return '<div class="cr'+(im?'':' noimg')+'" data-go="'+esc(c)+'">'+(im?'<img src="'+im+'" alt="" loading="lazy" decoding="async">':'<div class="em">'+esc(emo(c))+'</div>')+'<b>'+esc(c)+'</b></div>'}).join("")}
 document.addEventListener("click",function(e){var g=e.target.closest("[data-go]");if(g){if($("lg2").open)$("lg2").close();goShop(g.dataset.go)}});
 $("ap").onclick=function(){goShop("All")};
 $("car").addEventListener("scroll",function(){var c=$("car"),r=c.scrollWidth-c.clientWidth;$("pt").style.left=(r>0?c.scrollLeft/r*70:0)+"%"});
 $("hf").addEventListener("submit",function(e){e.preventDefault();goShop("All",$("hq").value.trim().toLowerCase())});
 $("sb").onclick=function(){setView("shop");draw();setTimeout(function(){$("q").focus()},100)};
 var taps=0,tt;$("lg").onclick=function(){setView("home");taps++;clearTimeout(tt);tt=setTimeout(function(){taps=0},2500);if(taps>=5){taps=0;adminEntry()}};
+$("adm").onclick=function(){adminEntry()};
 /* ---------- products ---------- */
 function ctl(i){var p=P[i];if(p[8]===false)return'<button class="btn" disabled style="opacity:.5">Out of Stock</button>';
  if(multi(p))return'<button class="btn" data-o="'+i+'">Select Options</button>';
@@ -279,13 +296,11 @@ function againUI(){var L=load("tob10-last",{}),ks=[],el=$("again"),n=0;
  if(!ks.length){el.hidden=true;return}
  el.hidden=false;el.innerHTML='<div class="ph"><h2>Order again</h2></div><div class="ci" style="padding:12px"><div class="sum"><span class="th">'+ks.slice(0,4).map(function(a){return'<img src="'+ci(a[0]).img+'" alt="">'}).join("")+'</span><b style="color:var(--ink);font-weight:600">'+items(n)+' from your last order</b></div><button class="pri" id="agb">Add them to my cart</button></div>';
  $("agb").onclick=function(){ks.forEach(function(a){setQty(a[0],Math.max(cart[a[0]]||0,a[1]))});toast("Added from your last order");cartUI();openD("cg")}}
-/* options sheet: each type/flavor has its own photo, name and price */
 function showOpts(i){var p=P[i],V=p[12]||[],d=$("og");
  function r(){d.innerHTML='<div class="dh" style="background:#f8f8f8"><h3>Select Options</h3><button class="x" id="ox" aria-label="Close">✕</button></div><div class="bd"><p class="note">'+esc(p[1])+'</p><div class="ci">'+V.map(function(v,j){var k=i+":"+j,pz=vp(p,j);return'<div class="ln"><div class="mid"><b style="margin:0">'+esc(v.name||"Option "+(j+1))+'</b><div class="pp'+(pz>0?"":" np")+'" style="font-size:.9rem;margin:2px 0 0">'+money(pz)+'</div></div><div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+(cart[k]||0)+'</span><button data-p="'+k+'" aria-label="More">+</button></div></div>'}).join("")+'</div></div><div class="ft2"><button class="pri" id="ou">Done</button></div>';
   $("ox").onclick=$("ou").onclick=function(){d.close()}}
  d.onclick=function(e){if(e.target===d){d.close();return}var b=e.target.closest("[data-p],[data-m]");if(!b)return;if(b.dataset.p!==undefined)bump(b.dataset.p,1);else bump(b.dataset.m,-1);var st=d.scrollTop;r();d.scrollTop=st};
  r();openD("og")}
-/* product page: photos are a gallery, options are a separate text list */
 function showP(i){var d=$("pg"),vi=0,oi=0;
  function r(){var st=d.scrollTop,p=P[i],V=p[10]||[],m=V.length>1,v=V[vi]||{url:p[6]},O=p[12]||[],t=p[1],out=p[8]===false,price=O.length?vp(p,oi):p[11];
  d.innerHTML='<div class="dh" style="border:0"><button class="sh" id="psh" aria-label="Share">⤴</button><button class="x" id="px" aria-label="Close">✕</button></div><div><div class="pimg"><img src="'+v.url+'" alt="'+esc(t)+'">'+(m?'<button class="l" id="pl" aria-label="Previous">‹</button><button class="r" id="pnx" aria-label="Next">›</button>':'')+'</div>'+(m?'<div class="thr">'+V.map(function(x,j){return'<img data-t="'+j+'" class="'+(j===vi?"on":"")+'" src="'+(x.thumb||x.url)+'" alt="">'}).join("")+'</div>':'')+'<div class="pt"><h1>'+esc(t)+'</h1><div class="pp'+(price>0?"":" np")+'">'+money(price)+'</div>'+(O.length?'<h4 style="margin:16px 0 8px;font-size:1rem">Options</h4><div class="ci">'+O.map(function(o,j){var oz=vp(p,j);return'<div class="opt2" data-oj="'+j+'" role="radio" aria-checked="'+(j===oi)+'"><span class="rd"></span><div><b>'+esc(o.name||"Option "+(j+1))+'</b><small>'+money(oz)+'</small></div></div>'}).join("")+'</div>':'')+'<hr><div class="ch"><em>'+(out?"Out of stock":"In stock")+'</em><em>'+esc(p[0])+'</em></div>'+(p[4]?'<p class="txt">'+esc(p[4])+'</p>':'')+(p[5].length?'<p class="txt">For buyers 18 or older.</p>':'')+'</div></div><div class="ft2"><button class="pri" id="pa"'+(out?' disabled style="opacity:.5"':'')+'>'+(out?"Out of Stock":"Add To Cart")+'</button></div>';
@@ -300,42 +315,41 @@ function showP(i){var d=$("pg"),vi=0,oi=0;
  var sx=0;d.ontouchstart=function(e){sx=e.touches[0].clientX};
  d.ontouchend=function(e){var V=P[i][10]||[];if(V.length>1&&e.target.closest(".pimg")){var x=e.changedTouches[0].clientX-sx;if(Math.abs(x)>50){vi=(vi+(x<0?1:-1)+V.length)%V.length;r()}}};
  r();openD("pg")}
-/* categories drawer */
 function catsUI(){var d=$("lg2");
  d.innerHTML='<div class="dh"><h3>Categories</h3><button class="x" id="lx" aria-label="Close">✕</button></div><div class="bd"><div class="sbox" style="background:#f4f4f6;border:0;margin-bottom:6px"><span style="background:none;width:26px">'+SRCH+'</span><input id="cs" placeholder="Search categories"></div><div id="cl"></div></div>';
  function fill(t){$("cl").innerHTML=["All Categories"].concat(cats).filter(function(c){return c.toLowerCase().indexOf(t)>=0}).map(function(c){return'<div class="cat-row" data-go="'+(c==="All Categories"?"All":esc(c))+'"><i>🛍</i><span>'+esc(c)+'</span><u>→</u></div>'}).join("")}
  fill("");$("lx").onclick=function(){d.close()};$("cs").oninput=function(){fill(this.value.trim().toLowerCase())};openD("lg2")}
-/* menu */
 function menu(o){$("menu").className=o?"o":"";$("ov").hidden=!o}
 $("mb").onclick=function(){menu(1)};$("mx").onclick=$("ov").onclick=function(){menu(0)};
 $("menu").addEventListener("click",function(e){var a=e.target.closest("[data-g]");if(!a)return;e.preventDefault();menu(0);var g=a.dataset.g;
  if(g==="home")setView("home");else if(g==="shop")goShop("All");else if(g==="cat")catsUI();else info()});
-function info(){var d=$("ig");d.innerHTML='<div class="dh"><h3>More Information</h3><button class="x" id="ix" aria-label="Close">✕</button></div><div class="bd"><p class="note">Korean and Asian noodles, snacks and drinks.</p><p style="font-weight:600;margin:0 0 12px">📞 07066467203</p><a class="pri" href="tel:+2347066467203">Call us</a><a class="gry" id="iw" target="_blank" rel="noopener" style="margin-top:10px">Chat on WhatsApp</a><p class="note" style="margin-top:14px">We confirm prices and delivery with you on WhatsApp before anything is sent. Soju is for buyers 18 or older.</p></div>';
+/* more information */
+function info(){var d=$("ig");d.innerHTML='<div class="dh"><h3>More Information</h3><button class="x" id="ix" aria-label="Close">✕</button></div><div class="bd"><div class="mi"><div class="mr"><div><b>Our Location</b><span>'+esc(LOCATION)+'</span></div><i>📍</i></div><div class="mr"><div><b>We Deliver To</b><span>'+esc(DELIVERY)+'</span></div><i>🗺️</i></div><div class="mr"><div><b>Average Delivery Timeline</b><span>'+esc(TIMELINE)+'</span></div><i>🚚</i></div></div><a class="pri" id="iw" target="_blank" rel="noopener">Chat on WhatsApp</a><a class="gry" href="tel:+'+PHONE+'" style="margin-top:10px">Call 0706 646 7203</a><p class="note" style="margin-top:14px">We confirm prices and delivery with you on WhatsApp before anything is sent.</p></div>';
  $("iw").href=$("cu").href;$("ix").onclick=function(){d.close()};openD("ig")}
 $("mi").onclick=info;
 /* cart */
 function thumbs(){return'<span class="th">'+Object.keys(cart).slice(0,3).map(function(k){var c=ci(k);return c?'<img src="'+c.img+'" alt="">':''}).join("")+'</span>'}
 function cartUI(){var ks=Object.keys(cart).filter(function(k){return ci(k)}),d=$("cg");
  if(!ks.length){d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>0 Items</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd" style="text-align:center;padding-top:40px"><p class="note">Your cart is empty.</p><button class="pri" id="cs2">Continue shopping</button></div>';$("cx").onclick=$("cs2").onclick=function(){d.close()};return}
- d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>'+items(total())+'</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd"><p class="note">Review your items and proceed to checkout when you’re ready</p><div class="ci">'+ks.map(function(k){var c=ci(k);return'<div class="ln"><img src="'+c.img+'" alt=""><div class="mid"><b>'+esc(c.name)+'</b><div class="pp" style="font-size:.85rem;margin:0 0 6px">'+(c.price?money(c.price)+' each':'No price')+'</div><div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+cart[k]+'</span><button data-p="'+k+'" aria-label="More">+</button><button class="tr" data-d="'+k+'" aria-label="Remove">🗑</button></div></div></div>'}).join("")+'</div></div><div class="ft2"><div class="sum"><span>Items</span>'+thumbs()+'<b style="color:var(--ink);font-weight:600">'+items(total())+'</b></div>'+(tp()?'<div class="tot"><span>Total</span><span>'+money(tp())+'</span></div>':'')+'<div class="two"><button class="gry" id="cc">Clear Cart</button><button class="pri" id="cp">Proceed</button></div></div>';
+ d.innerHTML='<div class="dh"><div><h3>Your Cart</h3><small>'+items(total())+'</small></div><button class="x" id="cx" aria-label="Close">✕</button></div><div class="bd"><p class="note">Review your items and proceed when you’re ready</p><div class="ci">'+ks.map(function(k){var c=ci(k);return'<div class="ln"><img src="'+c.img+'" alt=""><div class="mid"><b>'+esc(c.name)+'</b><div class="pp" style="font-size:.85rem;margin:0 0 6px">'+(c.price?money(c.price)+' each':'No price')+'</div><div class="q"><button data-m="'+k+'" aria-label="Less">−</button><span>'+cart[k]+'</span><button data-p="'+k+'" aria-label="More">+</button><button class="tr" data-d="'+k+'" aria-label="Remove">🗑</button></div></div></div>'}).join("")+'</div></div><div class="ft2"><div class="sum"><span>Items</span>'+thumbs()+'<b style="color:var(--ink);font-weight:600">'+items(total())+'</b></div>'+(tp()?'<div class="tot"><span>Total</span><span>'+money(tp())+'</span></div>':'')+'<div class="two"><button class="gry" id="cc">Clear Cart</button><button class="pri" id="cp">Proceed</button></div></div>';
  $("cx").onclick=function(){d.close()};
  $("cc").onclick=function(){if(confirm("Clear your whole cart?")){var o=Object.keys(cart);o.forEach(function(k){delete cart[k]});saveCart();draw();cartUI()}};
  $("cp").onclick=function(){$("cg").close();checkout()}}
 $("cg").addEventListener("click",function(e){var b=e.target.closest("[data-p],[data-m],[data-d]");if(!b)return;if(b.dataset.p!==undefined)bump(b.dataset.p,1);else if(b.dataset.m!==undefined)bump(b.dataset.m,-1);else setQty(b.dataset.d,0)});
 $("cb").onclick=function(){cartUI();openD("cg")};
-/* checkout */
+/* checkout: name + pickup/delivery only, order goes straight to WhatsApp */
 function orderMsg(enq){var m=enq?"Hello Timi’s Oppa Bite! I have a question about these items:\n":"Hello Timi’s Oppa Bite! I’d like to order:\n";Object.keys(cart).forEach(function(k){var c=ci(k);if(c)m+="• "+cart[k]+" × "+c.name+(c.price?" ("+money(c.price*cart[k])+")":"")+"\n"});
- return m+(tp()?"\nTotal: "+money(tp()):"")+"\nName: "+inf.n+"\nWhatsApp: "+(inf.p?phoneFmt(inf.p):"")+(inf.e?"\nEmail: "+inf.e:"")+"\nGet my order by: "+inf.m+(inf.m==="Delivery"&&inf.a?"\nMy address: "+inf.a:"")+"\n\nThank you!"}
+ return m+(tp()?"\nTotal: "+money(tp()):"")+"\nName: "+inf.n+"\nGet my order by: "+inf.m+(inf.m==="Delivery"&&inf.a?"\nMy address: "+inf.a:"")+"\n\nThank you!"}
 function wa(enq){window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(orderMsg(enq)),"_blank")}
 function checkout(){var d=$("kg");if(!total()){toast("Your cart is empty");return}
- d.innerHTML='<div class="dh"><h3>Purchase Information</h3><button class="x" id="kx" aria-label="Close">✕</button></div><div class="bar"><i></i></div><div class="bd"><div class="info">We’ll confirm your order, the price and delivery with you on WhatsApp.</div><div class="sc"><div style="display:flex;align-items:center;gap:10px">'+thumbs()+'<div><small>'+items(total()).toLowerCase()+'</small><b>Your order</b></div></div><button class="back" id="kb">‹ Back to Cart</button></div><h4>Your Details</h4><input class="fld" id="kn" placeholder="Full Name" value="'+esc(inf.n)+'" autocomplete="name"><div class="ph2"><span>🇳🇬 +234</span><input id="kp" type="tel" placeholder="Your Whatsapp Number" value="'+esc(inf.p)+'"></div><input class="fld" id="ke" type="email" placeholder="Email Address" value="'+esc(inf.e)+'"><h4>How would you like to get your order?</h4>'+
- '<div class="opt" id="o1" role="radio"><i>🏪</i><div><small>Pickup</small><b>We’ll share the pickup address on WhatsApp</b></div></div><div class="opt" id="o2" role="radio"><i>🛵</i><div><small>Delivery</small><b>Tell us where to bring it</b></div></div><input class="fld" id="ka" placeholder="Delivery address or area" value="'+esc(inf.a)+'" hidden></div><div class="ft2"><div class="two"><button class="gry" id="kq">Make Enquiry</button><button class="pri" id="kc">Continue</button></div></div>';
+ d.innerHTML='<div class="dh"><h3>Send your order</h3><button class="x" id="kx" aria-label="Close">✕</button></div><div class="bd"><div class="info">Your order goes straight to our WhatsApp. We’ll confirm the price and delivery with you there.</div><div class="sc"><div style="display:flex;align-items:center;gap:10px">'+thumbs()+'<div><small>'+items(total()).toLowerCase()+(tp()?' · '+money(tp()):'')+'</small><b>Your order</b></div></div><button class="back" id="kb">‹ Back to Cart</button></div><h4>Your name</h4><input class="fld" id="kn" placeholder="Full Name" value="'+esc(inf.n)+'" autocomplete="name"><h4>How would you like to get your order?</h4>'+
+ '<div class="opt" id="o1" role="radio"><i>🏪</i><div><small>Pickup</small><b>We’ll share the pickup address on WhatsApp</b></div></div><div class="opt" id="o2" role="radio"><i>🛵</i><div><small>Delivery</small><b>Tell us where to bring it</b></div></div><input class="fld" id="ka" placeholder="Delivery address or area" value="'+esc(inf.a)+'" hidden></div><div class="ft2"><button class="pri" id="kc">Send Order on WhatsApp</button><button class="lnk" id="kq" style="display:block;margin:8px auto 0">Just ask a question instead</button></div>';
  function mode(){$("o1").setAttribute("aria-checked",inf.m==="Pickup");$("o2").setAttribute("aria-checked",inf.m==="Delivery");$("ka").hidden=inf.m!=="Delivery"}mode();
- function rd(){inf.n=$("kn").value.trim();inf.p=$("kp").value.trim();inf.e=$("ke").value.trim();inf.a=$("ka").value.trim();save("tob9-info",inf)}
- ["kn","kp","ke","ka"].forEach(function(x){$(x).oninput=rd});
- $("o1").onclick=function(){inf.m="Pickup";save("tob9-info",inf);mode()};$("o2").onclick=function(){inf.m="Delivery";save("tob9-info",inf);mode()};
+ function rd(){inf.n=$("kn").value.trim();inf.a=$("ka").value.trim();save("tob11-info",inf)}
+ ["kn","ka"].forEach(function(x){$(x).oninput=rd});
+ $("o1").onclick=function(){inf.m="Pickup";save("tob11-info",inf);mode()};$("o2").onclick=function(){inf.m="Delivery";save("tob11-info",inf);mode()};
  $("kx").onclick=function(){d.close()};$("kb").onclick=function(){d.close();cartUI();openD("cg")};
- function need(){rd();if(!inf.n){toast("Please enter your full name");$("kn").focus();return false}if(inf.p.replace(/\D/g,"").length<10){toast("Please enter your WhatsApp number");$("kp").focus();return false}return true}
+ function need(){rd();if(!inf.n){toast("Please enter your name");$("kn").focus();return false}if(inf.m==="Delivery"&&!inf.a){toast("Please enter your delivery address");$("ka").focus();return false}return true}
  $("kq").onclick=function(){if(need())wa(true)};
  $("kc").onclick=function(){if(need()){wa(false);save("tob10-last",raw);toast("Opening WhatsApp to send your order…",2600)}};
  openD("kg")}
@@ -358,9 +372,10 @@ function adminLogin(mode){var d=$("ag"),up=mode==="up";
   .catch(function(e){b.disabled=false;er(e.message)})};
  openD("ag")}
 function tmo(p,ms,l){return Promise.race([p,new Promise(function(_,j){setTimeout(function(){j(new Error(l+" timed out. Check your network and try again."))},ms)})])}
-function compress(f,mx,qq){return new Promise(function(res,rej){var im=new Image,u=URL.createObjectURL(f);im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("Could not read this photo"))};im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);b?res(b):rej(new Error("Resize failed"))},"image/jpeg",qq)};im.src=u})}
+/* sharper photos: big main image + good-size thumb, high quality */
+function compress(f,mx,qq){return new Promise(function(res,rej){var im=new Image,u=URL.createObjectURL(f);im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("Could not read this photo"))};im.onload=function(){var k=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas"),x=c.getContext("2d");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){URL.revokeObjectURL(u);b?res(b):rej(new Error("Resize failed"))},"image/jpeg",qq)};im.src=u})}
 function upload(b){var path=Date.now()+"-"+Math.random().toString(36).slice(2,8)+".jpg";return sb.storage.from(BK).upload(path,b,{contentType:"image/jpeg",cacheControl:"31536000"}).then(function(r){if(r.error)throw r.error;return{path:path,url:sb.storage.from(BK).getPublicUrl(path).data.publicUrl}})}
-async function up(f){var a=await tmo(compress(f,900,.82),20000,"Resizing"),b=await tmo(compress(f,400,.75),20000,"Resizing"),u1=await tmo(upload(a),40000,"Upload"),u2=await tmo(upload(b),40000,"Upload");return{url:u1.url,path:u1.path,turl:u2.url,tpath:u2.path}}
+async function up(f){var a=await tmo(compress(f,1600,.92),30000,"Resizing"),b=await tmo(compress(f,640,.85),30000,"Resizing"),u1=await tmo(upload(a),60000,"Upload"),u2=await tmo(upload(b),60000,"Upload");return{url:u1.url,path:u1.path,turl:u2.url,tpath:u2.path}}
 function rm(a){a=a.filter(Boolean);if(a.length)sb.storage.from(BK).remove(a)}
 var acat="All",aq="";
 function adminUI(){var d=$("adg");
@@ -386,7 +401,7 @@ function pform(x){x=x||{};var b=$("ab"),gone=[];
  var opts=(Array.isArray(x.options)?x.options:[]).map(function(o){return{name:String(o.name||""),price:o.price||""}});
  b.onclick=null;
  b.innerHTML='<h4>'+(x.id?"Edit product":"Add product")+'</h4><div id="ape"></div><input class="fld" id="fnm" placeholder="Product name" value="'+esc(x.name||"")+'"><input class="fld" id="fpr" type="number" inputmode="decimal" min="0" placeholder="Main price (₦)" value="'+esc(x.price||"")+'"><input class="fld" id="fct" placeholder="Category (type or tap below)" autocomplete="off" value="'+esc(x.category||"")+'"><div class="cch" id="cch">'+cats.map(function(c){return'<button type="button" data-cc="'+esc(c)+'">'+esc(c)+'</button>'}).join("")+'</div><textarea class="fld" id="fds" rows="3" placeholder="Text under the product (optional)">'+esc(x.description||"")+'</textarea><label style="display:flex;gap:10px;align-items:center;margin-bottom:10px;font-size:.9rem"><input type="checkbox" id="fin"'+(x.in_stock===false?"":" checked")+'> In stock</label><label style="display:flex;gap:10px;align-items:center;margin-bottom:14px;font-size:.9rem"><input type="checkbox" id="fad"'+(x.adult?" checked":"")+'> For buyers 18 or older only</label>'+
- '<h4>Photos</h4><p class="note">Add as many photos as you like. The first one is the cover.</p><div id="phl"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label>'+
+ '<h4>Photos</h4><p class="note">Add as many photos as you like. The first one is the cover. Use clear, bright photos.</p><div id="phl"></div><label class="gry" style="margin-bottom:14px;cursor:pointer">＋ Add photos<input type="file" accept="image/*" multiple id="pmulti" hidden></label>'+
  '<h4>Options &amp; prices</h4><p class="note">Optional. Add each flavor or type with its own price. No options? The main price is used.</p><div id="opl"></div><button type="button" class="gry" id="aoa" style="margin-bottom:14px">＋ Add option</button><div class="two"><button class="gry" id="fc">Cancel</button><button class="pri" id="fs">Save</button></div>';
  function pe(t){$("ape").innerHTML='<p class="err">'+esc(t)+'</p>'}
  function rp(){$("phl").innerHTML=imgs.length?'<div class="gal">'+imgs.map(function(m,j){return'<div class="gi"><img src="'+esc(m.prev||m.turl||m.url)+'" alt=""><button data-r="'+j+'" aria-label="Remove">✕</button>'+(j===0?'<i class="cv">Cover</i>':'')+'</div>'}).join("")+'</div>':'<p class="note">No photos yet.</p>'}
