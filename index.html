@@ -186,7 +186,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 <h3>How to order</h3><div class="ck"><b>✓</b>Pick what you like</div><div class="ck"><b>✓</b>Add it to your cart</div><div class="ck"><b>✓</b>Send your order on WhatsApp</div>
 <div class="cp">© 2026 - Timi’s Oppa Bite</div></footer>
 <div id="ov" hidden></div>
-<aside id="menu"><div class="t"><div class="logo" style="cursor:default">TOB</div><button class="x" id="mx" aria-label="Close">✕</button></div><a href="#" data-g="home">Home</a><a href="#" data-g="shop">Shop</a><a href="#" data-g="cat">Categories</a><a href="#" data-g="info">More Information</a><a href="#" data-g="admin" id="madm" hidden>Admin</a>
+<aside id="menu"><div class="t"><div class="logo" style="cursor:default">TOB</div><button class="x" id="mx" aria-label="Close">✕</button></div><a href="#" data-g="home">Home</a><a href="#" data-g="shop">Shop</a><a href="#" data-g="cat">Categories</a><a href="#" data-g="info">More Information</a>
 <div class="ft">© 2026 - Timi’s Oppa Bite</div></aside>
 <dialog id="pg" class="full"></dialog><dialog id="og" class="full"></dialog><dialog id="cg" class="full"></dialog><dialog id="kg" class="full"></dialog><dialog id="ag" class="full"></dialog><dialog id="lg2" class="full"></dialog><dialog id="ig" class="full"></dialog><dialog id="adg" class="full"></dialog><div id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -231,7 +231,7 @@ var SB_ON=!!(SB_URL&&SB_KEY&&window.supabase),sb=null,user=null;
 if(SB_ON){sb=supabase.createClient(SB_URL,SB_KEY);
  sb.auth.getSession().then(function(r){user=r.data.session?r.data.session.user:null;acct()});
  sb.auth.onAuthStateChange(function(e,s){user=s?s.user:null;setTimeout(acct,0)})}
-function acct(){isAdmin=false;$("madm").hidden=true;if(user&&SB_ON)sb.from("profiles").select("role").eq("id",user.id).maybeSingle().then(function(r){isAdmin=!!(r.data&&r.data.role==="admin");$("madm").hidden=!isAdmin})}
+function acct(){isAdmin=false;if(user&&SB_ON)sb.from("profiles").select("role").eq("id",user.id).maybeSingle().then(function(r){isAdmin=!!(r.data&&r.data.role==="admin");0})}
 function loadProducts(cb){if(!SB_ON){loaded=true;draw();if(cb)cb();return}
  sb.from("products").select("*, product_images(*)").order("sort_order").order("created_at").then(function(r){
   if(r.error)toast("Could not load products",3000);else{DBROWS=r.data||[];P=DBROWS.map(function(x){
@@ -309,7 +309,7 @@ function catsUI(){var d=$("lg2");
 function menu(o){$("menu").className=o?"o":"";$("ov").hidden=!o}
 $("mb").onclick=function(){menu(1)};$("mx").onclick=$("ov").onclick=function(){menu(0)};
 $("menu").addEventListener("click",function(e){var a=e.target.closest("[data-g]");if(!a)return;e.preventDefault();menu(0);var g=a.dataset.g;
- if(g==="home")setView("home");else if(g==="shop")goShop("All");else if(g==="cat")catsUI();else if(g==="admin")adminUI();else info()});
+ if(g==="home")setView("home");else if(g==="shop")goShop("All");else if(g==="cat")catsUI();else info()});
 function info(){var d=$("ig");d.innerHTML='<div class="dh"><h3>More Information</h3><button class="x" id="ix" aria-label="Close">✕</button></div><div class="bd"><p class="note">Korean and Asian noodles, snacks and drinks.</p><p style="font-weight:600;margin:0 0 12px">📞 07066467203</p><a class="pri" href="tel:+2347066467203">Call us</a><a class="gry" id="iw" target="_blank" rel="noopener" style="margin-top:10px">Chat on WhatsApp</a><p class="note" style="margin-top:14px">We confirm prices and delivery with you on WhatsApp before anything is sent. Soju is for buyers 18 or older.</p></div>';
  $("iw").href=$("cu").href;$("ix").onclick=function(){d.close()};openD("ig")}
 $("mi").onclick=info;
@@ -349,7 +349,7 @@ function adminLogin(mode){var d=$("ag"),up=mode==="up";
  $("go").onclick=function(){var em=$("fe").value.trim(),pw=$("fw").value,b=this;if(!em||!pw){er("Please enter your email and password.");return}if(up&&pw.length<6){er("Password must be at least 6 characters.");return}
   b.disabled=true;
   function done(sess){return sb.from("profiles").select("role").eq("id",sess.user.id).maybeSingle().then(function(r){
-   if(r.data&&r.data.role==="admin"){save("tob8-made",true);isAdmin=true;$("madm").hidden=false;d.close();toast("Welcome, admin");adminUI()}
+   if(r.data&&r.data.role==="admin"){save("tob8-made",true);isAdmin=true;d.close();toast("Welcome, admin");adminUI()}
    else{sb.auth.signOut();b.disabled=false;er("This account is not a shop admin.")}})}
   (up?sb.auth.signUp({email:em,password:pw}):sb.auth.signInWithPassword({email:em,password:pw})).then(function(r){
    if(r.error){b.disabled=false;er(r.error.message);return}
@@ -365,7 +365,7 @@ function rm(a){a=a.filter(Boolean);if(a.length)sb.storage.from(BK).remove(a)}
 var acat="All",aq="";
 function adminUI(){var d=$("adg");
  d.innerHTML='<div class="dh"><h3>Admin</h3><div style="display:flex;gap:10px;align-items:center"><button class="lnk" id="alo">Log out</button><button class="x" id="adx" aria-label="Close">✕</button></div></div><div class="bd"><div id="ab"></div></div>';
- $("adx").onclick=function(){d.close()};$("alo").onclick=function(){sb.auth.signOut().then(function(){isAdmin=false;$("madm").hidden=true;d.close();toast("Logged out")})};
+ $("adx").onclick=function(){d.close()};$("alo").onclick=function(){sb.auth.signOut().then(function(){isAdmin=false;d.close();toast("Logged out")})};
  adProducts();openD("adg")}
 function adProducts(){var b=$("ab");
  b.innerHTML='<button class="pri" id="an">＋ Add product</button><div id="ac">'+["All"].concat(cats).map(function(c){var n=DBROWS.filter(function(x){return c==="All"||x.category===c}).length;return'<button data-ac="'+esc(c)+'" aria-pressed="'+(c===acat)+'">'+esc(c)+' ('+n+')</button>'}).join("")+'</div><input class="fld" id="as" placeholder="Search products" value="'+esc(aq)+'"><div id="al"></div>';
